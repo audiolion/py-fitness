@@ -39,7 +39,10 @@ class Exercise(models.Model):
 
 class Workout(Authorable, Editorable, Timestampable, Permalinkable):
     exercises = models.ForeignKey(Exercise)
-    objects = models.Manager
+    location = models.CharField(max_length=254, blank=True)
+    datetime = models.DateTimeField()
+
+    objects = models.Manager()
     authored = AuthorableQuerySet.as_manager()
 
     def __str__(self):
