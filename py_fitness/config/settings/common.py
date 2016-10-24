@@ -39,13 +39,15 @@ THIRD_PARTY_APPS = (
     'allauth',  # registration
     'allauth.account',  # registration
     'allauth.socialaccount',  # registration
+    'attachments',
 )
 
 # Apps specific for this project go here.
 LOCAL_APPS = (
     # custom users app
     'py_fitness.users.apps.UsersConfig',
-    # Your stuff: custom apps go here
+    'py_fitness.core',
+    'py_fitness.workout.apps.WorkoutConfig',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

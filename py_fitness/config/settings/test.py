@@ -14,6 +14,8 @@ from .common import *  # noqa
 DEBUG = False
 TEMPLATES[0]['OPTIONS']['debug'] = False
 
+ALLOWED_HOSTS=['*']
+
 # SECRET CONFIGURATION
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
