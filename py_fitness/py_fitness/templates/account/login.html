@@ -10,20 +10,41 @@
 
 <h1>{% trans "Sign In" %}</h1>
 
+<form class="login" method="POST" action="{% url 'account_login' %}">
+  {% csrf_token %}
+  {{ form|crispy }}
+  {% if redirect_field_value %}
+  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  {% endif %}
+  <button class="primaryAction btn btn-primary" type="submit">{% trans "Sign In" %}</button>
+  <a class="button secondaryAction pull-right" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+</form>
 {% get_providers as socialaccount_providers %}
 
+<div class="login-or">or</div>
 {% if socialaccount_providers %}
-<p>{% blocktrans with site.name as site_name %}Please sign in with one
-of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
-for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
 
 <div class="socialaccount_ballot">
+    {% with process="login" %}
+    {% load socialaccount %}
 
-  <ul class="socialaccount_providers">
-    {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-  </ul>
+    {% get_providers as socialaccount_providers %}
 
-  <div class="login-or">{% trans 'or' %}</div>
+    {% for provider in socialaccount_providers %}
+    {% if provider.id == "openid" %}
+    {% for brand in provider.get_brands %}
+      <a title="{{brand.name}}"
+         class="socialaccount_provider {{provider.id}} {{brand.id}} btn btn-block btn-social btn-{{ brand.id }}"
+         href="{% provider_login_url provider.id openid=brand.openid_url process=process %}"
+         ><span class="fa fa-{{ brand.id }}"></span> Sign in with {{brand.name}}
+      </a>
+    {% endfor %}
+    {% endif %}
+      <a title="{{provider.name}}" class="socialaccount_provider {{provider.id}} btn btn-block btn-social btn-{{provider.id}}"
+         href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}"
+         ><span class="fa fa-{{provider.id}}"></span> Sign in with {{provider.name}}</a>
+    {% endfor %}
+    {% endwith %}
 
 </div>
 
@@ -33,16 +54,6 @@ for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
 <p>{% blocktrans %}If you have not created an account yet, then please
 <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
 {% endif %}
-
-<form class="login" method="POST" action="{% url 'account_login' %}">
-  {% csrf_token %}
-  {{ form|crispy }}
-  {% if redirect_field_value %}
-  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-  {% endif %}
-  <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
-  <button class="primaryAction btn btn-primary" type="submit">{% trans "Sign In" %}</button>
-</form>
 
 {% endblock %}
 

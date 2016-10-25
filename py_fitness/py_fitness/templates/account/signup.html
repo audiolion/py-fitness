@@ -1,6 +1,7 @@
 {% extends "account/base.html" %}
 
 {% load i18n %}
+{% load account socialaccount %}
 {% load crispy_forms_tags %}
 
 {% block head_title %}{% trans "Signup" %}{% endblock %}
@@ -18,6 +19,38 @@
   {% endif %}
   <button class="btn btn-primary" type="submit">{% trans "Sign Up" %} &raquo;</button>
 </form>
+
+{% get_providers as socialaccount_providers %}
+
+<div class="login-or">or</div>
+{% if socialaccount_providers %}
+
+<div class="socialaccount_ballot">
+    {% with process="login" %}
+    {% load socialaccount %}
+
+    {% get_providers as socialaccount_providers %}
+
+    {% for provider in socialaccount_providers %}
+    {% if provider.id == "openid" %}
+    {% for brand in provider.get_brands %}
+      <a title="{{brand.name}}"
+         class="socialaccount_provider {{provider.id}} {{brand.id}} btn btn-block btn-social btn-{{ brand.id }}"
+         href="{% provider_login_url provider.id openid=brand.openid_url process=process %}"
+         ><span class="fa fa-{{ brand.id }}"></span> Sign in with {{brand.name}}
+      </a>
+    {% endfor %}
+    {% endif %}
+      <a title="{{provider.name}}" class="socialaccount_provider {{provider.id}} btn btn-block btn-social btn-{{provider.id}}"
+         href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}"
+         ><span class="fa fa-{{provider.id}}"></span> Sign in with {{provider.name}}</a>
+    {% endfor %}
+    {% endwith %}
+</div>
+
+{% include "socialaccount/snippets/login_extra.html" %}
+
+{% endif %}
 
 {% endblock %}
 
