@@ -1,0 +1,32 @@
+{
+  "name": "py_fitness",
+  "version": "0.0.1",
+  "description": "Fitness webapp",
+  "main": "entry.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "node-sass": "^3.10.1",
+    "sass-loader": "^4.0.2",
+    "webpack": "^1.13.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/audiolion/py-fitness.git"
+  },
+  "keywords": [
+    "fitness",
+    "tracker"
+  ],
+  "author": "Ryan Castner",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/audiolion/py-fitness/issues"
+  },
+  "homepage": "https://github.com/audiolion/py-fitness#readme"
+}
