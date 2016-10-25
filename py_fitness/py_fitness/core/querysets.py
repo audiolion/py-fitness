@@ -9,7 +9,10 @@ class PublishableQuerySet(models.QuerySet):
 
 class AuthorableQuerySet(models.QuerySet):
     def authored_by(self, author):
-        return self.filter(models.Q(author__userprofile__first_name__istartswith=author) | models.Q(author__userprofile__last_name__istartswith=author))
+        return self.filter(
+            models.Q(author__userprofile__first_name__istartswith=author) |
+            models.Q(author__userprofile__last_name__istartswith=author)
+        )
 
 
 class EditorableQuerySet(models.QuerySet):

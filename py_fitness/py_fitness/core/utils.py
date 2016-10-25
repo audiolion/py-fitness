@@ -2,6 +2,7 @@ from django.http import (Http404, HttpResponseRedirect)
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 
+
 class FormValidMixin(object):
 
     def form_valid(self, form):
@@ -28,8 +29,8 @@ class ActionedMessageMixin(object):
                 object_names += obj.__str__() + ", "
                 if prefix_set:
                     self.message_prefix += type(obj)._meta.model_name.title() + ", "
-            self.message_prefix = self.message_prefix[:len(self.message_prefix)-2]
-            object_names = object_names[:len(object_names)-2]
+            self.message_prefix = self.message_prefix[:len(self.message_prefix) - 2]
+            object_names = object_names[:len(object_names) - 2]
         except TypeError:
             object_names += objects.__str__()
             if self.message_prefix is '':
@@ -39,7 +40,7 @@ class ActionedMessageMixin(object):
 
 
 class SuccessUrlMixin(object):
-    kwargs_key = ['slug','pk','mpk']
+    kwargs_key = ['slug', 'pk', 'mpk']
 
     def get_success_url(self):
         new_kwargs = {}
@@ -51,7 +52,7 @@ class SuccessUrlMixin(object):
 
 
 class ArchiveSuccessUrlMixin(object):
-    kwargs_key = ['year','month', 'day']
+    kwargs_key = ['year', 'month', 'day']
 
     def get_success_url(self):
         new_kwargs = {}

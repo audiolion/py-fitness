@@ -37,6 +37,7 @@ class TestSet(TestCase):
             '/workouts/exercises/' + self.set.exercise.slug + '/'
         )
 
+
 class TestExercise(TestCase):
 
     def setUp(self):
@@ -78,11 +79,15 @@ class TestWorkout(TestCase):
     def test__str__(self):
         self.assertEqual(
             self.workout.__str__(),
-            'Jace Beleren\'s workout on {}'.format(timezone.now().strftime("%m-%d-%Y"))  # This is the default username for self.make_user()
+            'Jace Beleren\'s workout on {}'.format(timezone.now().strftime("%m-%d-%Y"))
         )
 
     def test_get_absolute_url(self):
         self.assertEqual(
             self.workout.get_absolute_url(),
-            '/workouts/{}/{}/{}/'.format(self.workout.date.strftime("%Y"), self.workout.date.strftime("%m"), self.workout.pk)
+            '/workouts/{}/{}/{}/'.format(
+                self.workout.date.strftime("%Y"),
+                self.workout.date.strftime("%m"),
+                self.workout.pk
+            )
         )

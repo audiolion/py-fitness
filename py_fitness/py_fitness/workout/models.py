@@ -18,9 +18,9 @@ class Exercise(models.Model):
 
     def _slugify(self, code, name):
         hashids = Hashids(
-                min_length=8,
-                salt=name + timezone.now().time().isoformat()
-            )
+            min_length=8,
+            salt=name + timezone.now().time().isoformat()
+        )
         return slugify(name) + "-" + hashids.encode(int(code))
 
     def save(self, *args, **kwargs):
