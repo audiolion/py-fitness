@@ -2,7 +2,7 @@
 // project specific CSS goes here
 
 ////////////////////////////////
-		//Variables//
+    //Variables//
 ////////////////////////////////
 
 // Alert colors
@@ -13,9 +13,10 @@ $black: #000;
 $pink: #f2dede;
 $dark-pink: #eed3d7;
 $red: #b94a48;
+$orange: #f39c12;
 
 ////////////////////////////////
-		//Alerts//
+    //Alerts//
 ////////////////////////////////
 
 // bootstrap alert CSS, translated to the django-standard levels of
@@ -34,13 +35,19 @@ $red: #b94a48;
 }
 
 ////////////////////////////////
-		//Navbar//
+    //Navbar//
 ////////////////////////////////
 
 // This is a fix for the bootstrap4 alpha release
 
 .navbar {
   border-radius: 0px;
+}
+
+@media (min-width: 544px) {
+  .navbar {
+    border-radius: 0px;
+  }
 }
 
 @media (max-width: 47.9em) {
@@ -60,7 +67,7 @@ $red: #b94a48;
 }
 
 ////////////////////////////////
-		//Django Toolbar//
+    //Django Toolbar//
 ////////////////////////////////
 
 // Display django-debug-toolbar.
