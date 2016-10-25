@@ -8,10 +8,30 @@ from hashids import Hashids
 from py_fitness.core.behaviors import Authorable, Editorable, Publishable, Timestampable
 
 
+class Workout(Authorable, Editorable, Timestampable, Publishable, models.Model):
+    date = models.DateTimeField()
+    weight = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    duration = models.DurationField(null=True, blank=True)
+    mood = models.CharField(max_length=254, blank=True)
+    location = models.CharField(max_length=254, blank=True)
+    notes = models.TextField(blank=True)
+
+    objects = models.Manager()
+
+    def __str__(self):
+        return "{}'s workout on {}".format(self.author.name, self.date.strftime("%m-%d-%Y"))
+
+    def get_absolute_url(self):
+        return reverse("wrk:workout_detail", kwargs={"pk": self.pk,
+                                                     "year": self.date.strftime("%Y"),
+                                                     "month": self.date.strftime("%m")})
+
+
 class Exercise(models.Model):
-    name = models.CharField(max_length=80, default='N/A')
+    name = models.CharField(max_length=80, default='')
     slug = models.SlugField(unique=True, max_length=140)
     notes = models.CharField(max_length=254, blank=True)
+    workout = models.ForeignKey(Workout, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -79,23 +99,3 @@ class Set(models.Model):
 
     def get_absolute_url(self):
         return reverse("wrk:exercise_detail", kwargs={"slug": self.exercise.slug})
-
-
-class Workout(Authorable, Editorable, Timestampable, Publishable, models.Model):
-    date = models.DateTimeField()
-    weight = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    duration = models.DurationField(null=True, blank=True)
-    mood = models.CharField(max_length=254, blank=True)
-    location = models.CharField(max_length=254, blank=True)
-    notes = models.TextField(blank=True)
-    exercises = models.ForeignKey(Exercise, blank=True, null=True)
-
-    objects = models.Manager()
-
-    def __str__(self):
-        return "{}'s workout on {}".format(self.author.name, self.date.strftime("%m-%d-%Y"))
-
-    def get_absolute_url(self):
-        return reverse("wrk:workout_detail", kwargs={"pk": self.pk,
-                                                     "year": self.date.strftime("%Y"),
-                                                     "month": self.date.strftime("%m")})
