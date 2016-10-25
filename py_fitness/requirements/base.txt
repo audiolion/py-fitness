@@ -51,3 +51,4 @@ django-compressor==2.1
 
 # Your custom requirements go here
 django-attachments==1.0.1
+hashids==1.1.0
