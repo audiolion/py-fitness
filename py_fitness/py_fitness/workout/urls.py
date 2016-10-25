@@ -11,4 +11,9 @@ urlpatterns = [
         view=views.WorkoutDetail.as_view(),
         name='workout_detail'
     ),
+    url(
+        regex=r'^exercises/(?P<slug>[-\w]+)/$',
+        view=views.ExerciseDetail.as_view(),
+        name='exercise_detail'
+    ),
 ]
