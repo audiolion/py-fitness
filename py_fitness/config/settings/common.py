@@ -42,6 +42,7 @@ THIRD_PARTY_APPS = (
     "allauth.socialaccount.providers.google",
     'attachments',
     'hashids',
+    'nested_admin',
 )
 
 # Apps specific for this project go here.
