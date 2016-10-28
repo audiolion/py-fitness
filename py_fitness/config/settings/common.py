@@ -43,6 +43,7 @@ THIRD_PARTY_APPS = (
     'attachments',
     'hashids',
     'nested_admin',
+    'rest_framework',
 )
 
 # Apps specific for this project go here.
@@ -276,3 +277,12 @@ SOCIALACCOUNT_PROVIDERS = \
           'AUTH_PARAMS': { 'access_type': 'online' }
         }
     }
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    # ],
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+}
