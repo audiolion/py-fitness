@@ -18,6 +18,9 @@ class Workout(Authorable, Editorable, Timestampable, Publishable, models.Model):
 
     objects = models.Manager()
 
+    class Meta:
+        ordering = ('date',)
+
     def __str__(self):
         return "{}'s workout on {}".format(self.author.name, self.date.strftime("%m-%d-%Y"))
 
@@ -31,7 +34,10 @@ class Exercise(models.Model):
     name = models.CharField(max_length=80, default='')
     slug = models.SlugField(unique=True, max_length=140)
     notes = models.CharField(max_length=254, blank=True)
-    workout = models.ForeignKey(Workout, blank=True, null=True)
+    workout = models.ForeignKey(Workout, blank=True, null=True, related_name='exercises')
+
+    class Meta:
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -90,7 +96,10 @@ class Set(models.Model):
         default=NORMAL
     )
     notes = models.CharField(max_length=254, blank=True)
-    exercise = models.ForeignKey(Exercise)
+    exercise = models.ForeignKey(Exercise, related_name='sets')
+
+    class Meta:
+        ordering = ('number',)
 
     def __str__(self):
         return "Set {} - {} - {} reps at {} {}".format(
