@@ -11,6 +11,7 @@ from ..models import Exercise, Set, Workout
 class ExerciseTests(APITestCase, TestCase):
     def setUp(self):
         self.user = self.make_user(username='test_oaf1163', password='mystikal6')
+        self.user2 = self.make_user(username='brolaf', password='bromacia!')
         self.client = APIClient()
         self.client.login(username='test_oaf1163', password='mystikal6')
         self.workout = Workout.objects.create(author=self.user, date=timezone.now())
@@ -18,7 +19,7 @@ class ExerciseTests(APITestCase, TestCase):
         self.set = Set.objects.create(number=1, weight=35.2, repetitions=10, exercise=self.exercise)
 
     def test_create_exercise(self):
-        url = reverse('wrk:api_exercise_list')
+        url = reverse('api:exercise_list')
         data = {
             'id': 20,
             'name': 'Reverse Grip Dumbbell Flies',
@@ -59,7 +60,7 @@ class ExerciseTests(APITestCase, TestCase):
         self.assertEqual(Exercise.objects.get(id=6).name, 'Reverse Grip Dumbbell Flies')
 
     def test_update_exercise(self):
-        url = reverse('wrk:api_exercise_detail', kwargs={'slug': self.exercise.slug})
+        url = reverse('api:exercise_detail', kwargs={'slug': self.exercise.slug})
 
         data = {
             'name': 'Close-grip Bench Press'
@@ -68,8 +69,20 @@ class ExerciseTests(APITestCase, TestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Exercise.objects.get(pk=self.exercise.pk).name, 'Close-grip Bench Press')
 
+    def test_update_not_allowed_exercise(self):
+        url = reverse('api:exercise_detail', kwargs={'slug': self.exercise.slug})
+
+        data = {
+            'name': 'Close-grip Bro Press'
+        }
+        self.client.logout()
+        self.client.login(username='brolaf', password='bromacia!')
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(Exercise.objects.get(pk=self.exercise.pk).name, 'bench press')
+
     def test_delete_exercise(self):
-        url = reverse('wrk:api_exercise_detail', kwargs={'slug': self.exercise.slug})
+        url = reverse('api:exercise_detail', kwargs={'slug': self.exercise.slug})
 
         data = {
             'pk': self.exercise.pk
@@ -90,7 +103,7 @@ class SetTests(APITestCase, TestCase):
         self.set = Set.objects.create(number=2, weight=55, repetitions=8, exercise=self.exercise)
 
     def test_create_set(self):
-        url = reverse('wrk:api_set_list', kwargs={'slug': self.exercise.slug})
+        url = reverse('api:set_list', kwargs={'slug': self.exercise.slug})
 
         data = {
             'number': 1,
@@ -107,7 +120,7 @@ class SetTests(APITestCase, TestCase):
         self.assertEqual(Set.objects.filter(exercise=self.exercise.pk)[0].weight, 35)
 
     def test_update_set(self):
-        url = reverse('wrk:api_set_detail', kwargs={'slug': self.exercise.slug, 'pk': self.set.pk})
+        url = reverse('api:set_detail', kwargs={'slug': self.exercise.slug, 'pk': self.set.pk})
 
         data = {
             'number': 1,
@@ -123,7 +136,7 @@ class SetTests(APITestCase, TestCase):
         self.assertEqual(Set.objects.filter(exercise=self.exercise.pk)[0].repetitions, 10)
 
     def test_delete_set(self):
-        url = reverse('wrk:api_set_detail', kwargs={'pk': self.set.pk, 'slug': self.exercise.slug})
+        url = reverse('api:set_detail', kwargs={'pk': self.set.pk, 'slug': self.exercise.slug})
 
         data = {
             'pk': self.set.pk

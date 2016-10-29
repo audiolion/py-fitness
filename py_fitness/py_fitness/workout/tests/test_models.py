@@ -34,7 +34,7 @@ class TestSet(TestCase):
     def test_get_absolute_url(self):
         self.assertEqual(
             self.set.get_absolute_url(),
-            '/workouts/exercises/' + self.set.exercise.slug + '/'
+            '/api/exercises/' + self.set.exercise.slug + '/' + 'sets/' + str(self.set.pk) + '/'
         )
 
 
@@ -62,7 +62,7 @@ class TestExercise(TestCase):
     def test_get_absolute_url(self):
         self.assertEqual(
             self.exercise.get_absolute_url(),
-            '/workouts/exercises/' + self.exercise.slug + '/'
+            '/api/exercises/' + self.exercise.slug + '/'
         )
 
 
@@ -85,7 +85,7 @@ class TestWorkout(TestCase):
     def test_get_absolute_url(self):
         self.assertEqual(
             self.workout.get_absolute_url(),
-            '/workouts/{}/{}/{}/'.format(
+            '/api/workouts/{}/{}/{}/'.format(
                 self.workout.date.strftime("%Y"),
                 self.workout.date.strftime("%m"),
                 self.workout.pk

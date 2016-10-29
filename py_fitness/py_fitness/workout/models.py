@@ -8,7 +8,7 @@ from hashids import Hashids
 from py_fitness.core.behaviors import Authorable, Editorable, Publishable, Timestampable
 
 
-class Workout(Authorable, Editorable, Timestampable, Publishable, models.Model):
+class Workout(Authorable, Timestampable, Publishable, models.Model):
     date = models.DateTimeField()
     weight = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     duration = models.DurationField(null=True, blank=True)
@@ -25,7 +25,7 @@ class Workout(Authorable, Editorable, Timestampable, Publishable, models.Model):
         return "{}'s workout on {}".format(self.author.name, self.date.strftime("%m-%d-%Y"))
 
     def get_absolute_url(self):
-        return reverse("wrk:workout_detail", kwargs={"pk": self.pk,
+        return reverse("api:workout_detail", kwargs={"pk": self.pk,
                                                      "year": self.date.strftime("%Y"),
                                                      "month": self.date.strftime("%m")})
 
@@ -56,7 +56,7 @@ class Exercise(models.Model):
         super(Exercise, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse("wrk:exercise_detail", kwargs={"slug": self.slug})
+        return reverse("api:exercise_detail", kwargs={"slug": self.slug})
 
 
 class Set(models.Model):
@@ -107,4 +107,4 @@ class Set(models.Model):
             self.weight, self.get_weight_measurement_display())
 
     def get_absolute_url(self):
-        return reverse("wrk:exercise_detail", kwargs={"slug": self.exercise.slug})
+        return reverse("api:set_detail", kwargs={"slug": self.exercise.slug, "pk": self.pk})

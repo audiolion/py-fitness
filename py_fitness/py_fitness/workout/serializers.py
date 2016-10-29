@@ -1,4 +1,7 @@
 from rest_framework import serializers
+
+from py_fitness.users.models import User
+
 from .models import Exercise, Set, Workout
 
 
@@ -29,3 +32,19 @@ class ExerciseSerializer(serializers.ModelSerializer):
         for set_data in sets_data:
             Set.objects.create(exercise=exercise, **set_data)
         return exercise
+
+
+class WorkoutSerializer(serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='author.username')
+
+    class Meta:
+        model = Workout
+        fields = ('author','date','weight','duration','location','mood','notes','publish_date')
+
+
+class UserSerializer(serializers.ModelSerializer):
+    workouts = serializers.PrimaryKeyRelatedField(many=True, queryset=Workout.objects.all())
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'workouts')

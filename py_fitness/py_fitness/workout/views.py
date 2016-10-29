@@ -7,19 +7,44 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import mixins
 from rest_framework import generics
+from rest_framework import permissions
+
+from py_fitness.users.models import User
 
 from .models import Workout, Exercise, Set
-from .serializers import ExerciseSerializer, SetSerializer
-
-class WorkoutDetail(APIView):
-    model = Workout
+from .permissions import WorkoutIsOwnerOrReadOnly, ExerciseIsOwnerOrReadOnly, SetIsOwnerOrReadOnly, UserIsOwnerOrReadOnly
+from .serializers import ExerciseSerializer, SetSerializer, UserSerializer, WorkoutSerializer
 
 
-class ExerciseDetail(DetailView):
-    model = Exercise
+class ApiUserList(generics.ListAPIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, UserIsOwnerOrReadOnly)
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class ApiUserDetail(generics.RetrieveAPIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, UserIsOwnerOrReadOnly)
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class ApiWorkoutList(generics.ListCreateAPIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, WorkoutIsOwnerOrReadOnly)
+    queryset = Workout.objects.all()
+    serializer_class = WorkoutSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+
+class ApiWorkoutDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, WorkoutIsOwnerOrReadOnly)
+    queryset = Workout.objects.all()
+    serializer_class = WorkoutSerializer
 
 
 class ApiExerciseList(APIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, ExerciseIsOwnerOrReadOnly)
 
     def get(self, request, format=None):
         exercises = Exercise.objects.all()
@@ -34,13 +59,15 @@ class ApiExerciseList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ApiExerciseDetail(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
-    queryset = Exercise.objects.all()
-    serializer_class = ExerciseSerializer
+class ApiExerciseDetail(APIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, ExerciseIsOwnerOrReadOnly)
 
     def get_object(self, slug):
+
         try:
-            return Exercise.objects.get(slug=slug)
+            obj = Exercise.objects.get(slug=slug)
+            self.check_object_permissions(self.request, obj)
+            return obj
         except Exercise.DoesNotExist:
             raise Http404
 
@@ -64,10 +91,12 @@ class ApiExerciseDetail(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
 
 
 class ApiSetList(generics.ListCreateAPIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, SetIsOwnerOrReadOnly)
     queryset = Set.objects.all()
     serializer_class = SetSerializer
 
 
 class ApiSetDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, SetIsOwnerOrReadOnly)
     queryset = Set.objects.all()
     serializer_class = SetSerializer
