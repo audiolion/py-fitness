@@ -7,33 +7,43 @@ from . import views
 
 urlpatterns = [
     url(
-        regex=r'^(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/(?P<pk>[0-9]+)/$',
-        view=views.WorkoutDetail.as_view(),
+        regex=r'^workouts/$',
+        view=views.ApiWorkoutList.as_view(),
+        name='workout_list'
+    ),
+    url(
+        regex=r'^workouts/(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/(?P<pk>[0-9]+)/$',
+        view=views.ApiWorkoutDetail.as_view(),
         name='workout_detail'
     ),
     url(
+        regex=r'^exercises/$',
+        view=views.ApiExerciseList.as_view(),
+        name='exercise_list'
+    ),
+    url(
         regex=r'^exercises/(?P<slug>[-\w]+)/$',
-        view=views.ExerciseDetail.as_view(),
+        view=views.ApiExerciseDetail.as_view(),
         name='exercise_detail'
     ),
     url(
-        regex=r'^api/exercises/$',
-        view=views.ApiExerciseList.as_view(),
-        name='api_exercise_list'
-    ),
-    url(
-        regex=r'^api/exercises/(?P<slug>[-\w]+)/$',
-        view=views.ApiExerciseDetail.as_view(),
-        name='api_exercise_detail'
-    ),
-    url(
-        regex=r'^api/exercises/(?P<slug>[-\w]+)/sets/$',
+        regex=r'^exercises/(?P<slug>[-\w]+)/sets/$',
         view=views.ApiSetList.as_view(),
-        name='api_set_list'
+        name='set_list'
     ),
     url(
-        regex=r'^api/exercises/(?P<slug>[-\w]+)/sets/(?P<pk>[0-9]+)/$',
+        regex=r'^exercises/(?P<slug>[-\w]+)/sets/(?P<pk>[0-9]+)/$',
         view=views.ApiSetDetail.as_view(),
-        name='api_set_detail'
-    )
+        name='set_detail'
+    ),
+    url(
+        regex=r'^users/$',
+        view=views.ApiUserList.as_view(),
+        name='user_view'
+    ),
+    url(
+        regex=r'^users/(?P<pk>[0-9]+)/$',
+        view=views.ApiUserDetail.as_view(),
+        name='user_detail'
+    ),
 ]
