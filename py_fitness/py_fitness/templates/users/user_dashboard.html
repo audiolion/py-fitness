@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard - {{ object.username }}{% endblock %}
+
+
+{% block content %}
+<div id="app" class="container">
+
+  <div class="row">
+    <div class="col-sm-12">
+      <h1 class="text-center">Workouts</h1>
+
+      <p v-if="workouts.length == 0">No Recent Workouts</p>
+      <div v-for="workout in workouts">
+        <div class="col-sm-8 col-sm-offset-2">
+          <h3>[[ workout.date ]] <div v-if="workout.location.length > 0"> at [[ workout.location ]]</div></h3>
+          <p>[[ workout.mood ]]</p>
+          <p>[[ workout.weight ]]</p>
+          <p>[[ workout.duration ]]</p>
+          <p>[[ workout.notes ]]</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/pages/home.js' %}"></script>
+{% endblock content %}

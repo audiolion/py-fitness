@@ -17,11 +17,19 @@ class UserDetailView(LoginRequiredMixin, DetailView):
     slug_url_kwarg = 'username'
 
 
+class UserDashboardView(LoginRequiredMixin, DetailView):
+    model = User
+    # These next two lines tell the view to index lookups by username
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
+    template_name = 'users/user_dashboard.html'
+
+
 class UserRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self):
-        return reverse('users:detail',
+        return reverse('users:dashboard',
                        kwargs={'username': self.request.user.username})
 
 
