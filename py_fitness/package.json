@@ -5,7 +5,10 @@
   "directories": {
     "doc": "docs"
   },
-  "dependencies": {},
+  "dependencies": {
+    "moment": "^2.16.0",
+    "moment-timezone": "^0.5.9"
+  },
   "devDependencies": {
     "browser-sync": "^2.14.0",
     "del": "^2.2.2",
