@@ -1,12 +1,12 @@
-{% load staticfiles i18n compress%}<!DOCTYPE html>
+{% load staticfiles compress%}<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>{% block title %}PY Fitness{% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Workout Tracker">
+    <meta name="author" content="Ryan Castner">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -14,20 +14,18 @@
     <![endif]-->
 
     {% block css %}
-    <!-- Latest compiled and minified Bootstrap 4 Alpha 4 CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
 
     <!-- Your stuff: Third-party CSS libraries go here -->
     {% compress css %}
     <!-- This file stores project-specific CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-theme.min.css' %}" rel="stylesheet">
     <link href="{% static 'font-awesome-4.7.0/css/font-awesome.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/bootstrap-social.css' %}" rel="stylesheet">
     <link href="{% static 'css/project.min.css' %}" rel="stylesheet">
     {% endcompress %}
     {% endblock %}
 
-    <script type="text/javascript" src="https://unpkg.com/vue/dist/vue.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/vue-resource@1.0.3/dist/vue-resource.min.js"></script>
     {% block headerjs %}
     {% endblock %}
 
@@ -35,60 +33,50 @@
 
   <body>
 
-    <nav class="navbar navbar-dark bg-primary">
+    <nav class="navbar navbar-inverse">
       <div class="container">
-
-        <div class="row hidden-md-up">
-          <div class="col-xs-3">
-            <button type="button" class="navbar-toggler hidden-md-up" data-toggle="collapse" data-target="#navbarResponsive"></button>
-          </div>
-          <div class="col-xs-6 text-center hidden-md-up">
-            <a class="navbar-brand w-100" href="#">
-              <img style="position: absolute; left: 50%; margin-left: -70px;" src="{% static 'images/PY_Fitness_logo.png' %}" alt="PY Fitness">
-            </a>
-          </div>
-          <div class="col-xs-3">
-
-          </div>
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="navbar-collapse" aria-expanded="false">
+            <span class="sr-only">Toggle Navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">
+            <img src="{% static 'images/PY_Fitness_logo.png' %}" alt="PY Fitness">
+          </a>
         </div>
 
-        <div class="text-center">
-          <div class="hidden-xs">
-            <a class="navbar-brand hidden-sm-down" href="#">
-              <img src="{% static 'images/PY_Fitness_logo.png' %}" alt="PY Fitness">
-            </a>
-            <div class="collapse navbar-toggleable-sm" id="navbarResponsive">
-              <ul class="nav navbar-nav">
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'home' %}">Home</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'about' %}">About</a>
-                </li>
-              </ul>
-              <ul class="nav navbar-nav float-md-right">
-                {% if request.user.is_authenticated %}
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">{% trans "My Profile" %}</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'account_logout' %}">{% trans "Sign Out" %}</a>
-                  </li>
-                {% else %}
-                  <li class="nav-item">
-                    <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
-                  </li>
-                  <li class="nav-item">
-                    <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% trans "Sign In" %}</a>
-                  </li>
-                {% endif %}
-              </ul>
-            </div>
-          </div>
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'home' %}">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'about' %}">About</a>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            {% if request.user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">My Profile</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'account_logout' %}">Sign Out</a>
+              </li>
+            {% else %}
+              <li class="nav-item">
+                <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">Sign Up</a>
+              </li>
+              <li class="nav-item">
+                <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">Sign In</a>
+              </li>
+            {% endif %}
+          </ul>
         </div>
-
       </div>
     </nav>
+
     <div class="container">
 
       {% if messages %}
@@ -105,25 +93,20 @@
 
     {% block modal %}{% endblock modal %}
 
-    <!-- Le javascript
-    ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     {% block javascript %}
-      <!-- Required by Bootstrap v4 Alpha 4 -->
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7" crossorigin="anonymous"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.7/js/tether.min.js" integrity="sha384-XTs3FgkjiBgo8qjEjBk0tGmf3wPrWtA6coPfQDfFEY8AnYJwjalXCiosYRBIBZX8" crossorigin="anonymous"></script>
-      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+      <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.native/1.0.5/bootstrap-native.min.js"></script>
 
       <!-- Your stuff: Third-party javascript libraries go here -->
 
       <!-- place project specific Javascript in this file -->
       {% compress js %}
-      <script src="{% static 'js/project.js' %}"></script>
+      <script src="{% static 'js/project.min.js' %}"></script>
       {% endcompress %}
 
     {% endblock javascript %}
 
-    {% block js_includes %}
+    {% block footer %}
     {% endblock %}
   </body>
 </html>

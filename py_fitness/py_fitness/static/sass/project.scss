@@ -1,19 +1,67 @@
 
 // project specific CSS goes here
 
+.pad-top {
+  padding-top: 2em;
+}
+
+
+
 ////////////////////////////////
     //Variables//
 ////////////////////////////////
 
 // Alert colors
 
-$white: #000;
+$white: #fff;
 $mint-green: #d6e9c6;
 $black: #000;
 $pink: #f2dede;
 $dark-pink: #eed3d7;
 $red: #b94a48;
 $orange: #f39c12;
+
+$primary-color-dark:   #F57C00;
+$primary-color:        #FF9800;
+$primary-color-light:  #FFE0B2;
+$primary-color-text:   #212121;
+$accent-color:         #448AFF;
+$primary-text-color:   #212121;
+$secondary-text-color: #757575;
+$divider-color:        #BDBDBD;
+
+.bg-primary {
+  background-color: $primary-color;
+}
+
+.bg-primary-dark {
+  background-color: $primary-color-dark;
+}
+
+.bg-primary-light {
+  background-color: $primary-color-light;
+}
+
+.bg-accent {
+  background-color: $accent-color;
+}
+
+.divider {
+  background-color: $divider-color;
+}
+
+.border:first-child {
+  border-top: 1px solid $divider-color;
+}
+
+.border {
+  border-bottom: 1px solid $divider-color;
+}
+
+.card {
+  box-shadow: 0px 4px 6px rgba(0,0,0,0.06);
+  padding: 1em;
+}
 
 ////////////////////////////////
     //Alerts//
@@ -35,35 +83,15 @@ $orange: #f39c12;
 }
 
 ////////////////////////////////
-    //Navbar//
-////////////////////////////////
+    //Bootstrap Overides//
+///////////////////////////////
 
-// This is a fix for the bootstrap4 alpha release
+a.navbar-brand {
+  padding: 7px;
+}
 
-.navbar {
+nav.navbar-inverse {
   border-radius: 0px;
-}
-
-@media (min-width: 544px) {
-  .navbar {
-    border-radius: 0px;
-  }
-}
-
-@media (max-width: 47.9em) {
-  .navbar-nav .nav-item {
-    display: inline-block;
-    float: none;
-    width: 100%;
-  }
-
-  .navbar-nav .nav-item + .nav-item {
-    margin-left: 0;
-  }
-
-  .nav.navbar-nav.pull-xs-right {
-    float: none !important;
-  }
 }
 
 ////////////////////////////////
