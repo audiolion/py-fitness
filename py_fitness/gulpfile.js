@@ -1,25 +1,25 @@
 
 ////////////////////////////////
-		//Setup//
+    //Setup//
 ////////////////////////////////
 
 // Plugins
 var gulp = require('gulp'),
-      pjson = require('./package.json'),
-      gutil = require('gulp-util'),
-      sass = require('gulp-sass'),
-      autoprefixer = require('gulp-autoprefixer'),
-      cssnano = require('gulp-cssnano'),
-      rename = require('gulp-rename'),
-      del = require('del'),
-      plumber = require('gulp-plumber'),
-      pixrem = require('gulp-pixrem'),
-      uglify = require('gulp-uglify'),
-      imagemin = require('gulp-imagemin'),
-      exec = require('child_process').exec,
-      runSequence = require('run-sequence'),
-      browserSync = require('browser-sync').create(),
-      reload = browserSync.reload;
+    pjson = require('./package.json'),
+    gutil = require('gulp-util'),
+    sass = require('gulp-sass'),
+    autoprefixer = require('gulp-autoprefixer'),
+    cssnano = require('gulp-cssnano'),
+    rename = require('gulp-rename'),
+    del = require('del'),
+    plumber = require('gulp-plumber'),
+    pixrem = require('gulp-pixrem'),
+    uglify = require('gulp-uglify'),
+    imagemin = require('gulp-imagemin'),
+    exec = require('child_process').exec,
+    runSequence = require('run-sequence'),
+    browserSync = require('browser-sync').create(),
+    reload = browserSync.reload;
 
 
 // Relative paths function
@@ -39,8 +39,9 @@ var pathsConfig = function (appName) {
 
 var paths = pathsConfig();
 
+
 ////////////////////////////////
-		//Tasks//
+    //Tasks//
 ////////////////////////////////
 
 // Styles autoprefixing and minification
@@ -88,21 +89,22 @@ gulp.task('browserSync', function() {
     });
 });
 
-// Default task
-gulp.task('default', function() {
-    runSequence(['styles', 'scripts', 'imgCompression'], 'runServer', 'browserSync');
-});
-
-////////////////////////////////
-		//Watch//
-////////////////////////////////
-
-// Watch
-gulp.task('watch', ['default'], function() {
-
+gulp.task('watch', function() {
   gulp.watch(paths.sass + '/*.scss', ['styles']);
   gulp.watch(paths.js + '/*.js', ['scripts']).on("change", reload);
   gulp.watch(paths.images + '/*', ['imgCompression']);
   gulp.watch(paths.templates + '/**/*.html').on("change", reload);
 
 });
+
+// Default task
+gulp.task('default', ['watch'], function() {
+    runSequence(['styles', 'scripts', 'imgCompression'], 'runServer', 'browserSync');
+});
+
+////////////////////////////////
+    //Watch//
+////////////////////////////////
+
+// Watch
+
