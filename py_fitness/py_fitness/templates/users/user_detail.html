@@ -3,8 +3,14 @@
 
 {% block title %}User: {{ object.username }}{% endblock %}
 
+
+{% block headerjs %}
+  <link rel="stylesheet" href="{% static 'css/rome.min.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="container">
+  {% load crispy_forms_tags %}
 
   <div class="row">
     <div class="col-sm-12">
@@ -13,6 +19,21 @@
       {% if object.name %}
         <p>{{ object.name }}</p>
       {% endif %}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <div class="card">
+        <form class="workout" id="workout_form" method="post" action="">
+          {% csrf_token %}
+          {{ form|crispy }}
+          {% if redirect_field_value %}
+          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+          {% endif %}
+          <button class="btn btn-primary" type="submit">Start Workout</button>
+        </form>
+      </div>
     </div>
   </div>
 
@@ -34,3 +55,38 @@
 </div>
 {% endblock content %}
 
+{% block footer %}
+  <script src="{% static 'js/project.min.js' %}"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="{% static 'js/js.cookie.js' %}"></script>
+  <script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+      var form = document.getElementById('workout_form');
+
+      var callback = function(e) {
+        e.preventDefault();
+
+
+        axios.post('{% url "api:workout_list" %}', {
+          date: document.getElementById('id_date').value
+        }, {
+          headers: {'X-CSRFToken': Cookies.get('csrftoken')}
+        })
+        .then(function (response) {
+          // clear form fields, move to next url
+          console.log(response);
+        })
+        .catch(function (error) {
+          // bootstrap sweetalert?
+          console.log(error);
+        });
+      };
+
+      if (form.addEventListener) {
+        form.addEventListener("submit", callback, false);
+      } else if (form.attachEvent) {
+        form.attachEvent('onsubmit', callback);
+      }
+    });
+  </script>
+{% endblock %}

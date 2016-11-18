@@ -16,6 +16,7 @@ var gulp = require('gulp'),
     pixrem = require('gulp-pixrem'),
     uglify = require('gulp-uglify'),
     imagemin = require('gulp-imagemin'),
+    browserify = require('gulp-browserify'),
     exec = require('child_process').exec,
     runSequence = require('run-sequence'),
     browserSync = require('browser-sync').create(),
@@ -61,6 +62,10 @@ gulp.task('styles', function() {
 gulp.task('scripts', function() {
   return gulp.src(paths.js + '/project.js')
     .pipe(plumber()) // Checks for errors
+    .pipe(browserify({
+      insertGlobals: true,
+      debug: !gulp.env.production
+    }))
     .pipe(uglify()) // Minifies the js
     .pipe(rename({ suffix: '.min' }))
     .pipe(gulp.dest(paths.js));
@@ -89,16 +94,8 @@ gulp.task('browserSync', function() {
     });
 });
 
-gulp.task('watch', function() {
-  gulp.watch(paths.sass + '/*.scss', ['styles']);
-  gulp.watch(paths.js + '/*.js', ['scripts']).on("change", reload);
-  gulp.watch(paths.images + '/*', ['imgCompression']);
-  gulp.watch(paths.templates + '/**/*.html').on("change", reload);
-
-});
-
 // Default task
-gulp.task('default', ['watch'], function() {
+gulp.task('default', function() {
     runSequence(['styles', 'scripts', 'imgCompression'], 'runServer', 'browserSync');
 });
 
@@ -108,3 +105,10 @@ gulp.task('default', ['watch'], function() {
 
 // Watch
 
+gulp.task('watch', ['default'], function() {
+  gulp.watch(paths.sass + '/*.scss', ['styles']);
+  gulp.watch(paths.js + '/*.js', ['scripts']).on("change", reload);
+  gulp.watch(paths.images + '/*', ['imgCompression']);
+  gulp.watch(paths.templates + '/**/*.html').on("change", reload);
+
+});

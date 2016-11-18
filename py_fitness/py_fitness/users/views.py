@@ -6,7 +6,7 @@ from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-
+from py_fitness.workout.forms import WorkoutForm
 from .models import User
 
 
@@ -16,12 +16,21 @@ class UserDetailView(LoginRequiredMixin, DetailView):
     slug_field = 'username'
     slug_url_kwarg = 'username'
 
+    def get_context_data(self, **kwargs):
+        context = super(UserDetailView, self).get_context_data(**kwargs)
+
+        if self.request.method == 'GET':
+            context['form'] = WorkoutForm()
+
+        return context
+
+
 
 class UserRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self):
-        return reverse('users:dashboard',
+        return reverse('users:detail',
                        kwargs={'username': self.request.user.username})
 
 
