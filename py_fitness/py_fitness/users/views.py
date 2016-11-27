@@ -7,6 +7,8 @@ from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from py_fitness.workout.forms import WorkoutForm
+from py_fitness.workout.models import Workout
+
 from .models import User
 
 

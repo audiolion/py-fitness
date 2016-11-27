@@ -16,3 +16,43 @@
 
 </div>
 {% endblock content %}
+
+{% block footer %}
+
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="{% static 'js/js.cookie.js' %}"></script>
+  <script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+      var form = document.getElementById('workout_form');
+
+      var callback = function(e) {
+        e.preventDefault();
+
+        axios.post('{% url "api:workout_list" %}', {
+          date: document.getElementById('id_date').value,
+          location: document.getElementById('id_location').value,
+          mood: document.getElementById('id_mood').value,
+          weight: parseFloat(document.getElementById('id_weight').value),
+          notes: document.getElementById('id_notes').value
+        }, {
+          headers: {'X-CSRFToken': Cookies.get('csrftoken')}
+        })
+        .then(function (response) {
+          // clear form fields, move to next url
+          form.reset();
+          workout = response.data;
+        })
+        .catch(function (error) {
+          // bootstrap sweetalert?
+          console.log(error);
+        });
+      };
+
+      if (form.addEventListener) {
+        form.addEventListener("submit", callback, false);
+      } else if (form.attachEvent) {
+        form.attachEvent('onsubmit', callback);
+      }
+    });
+  </script>
+{% endblock %}
