@@ -11,6 +11,27 @@
 
       <h2>{{ object}}</h2>
 
+      {% for workout in workouts %}
+        <div class="panel panel-default">
+          <div class="panel-heading">
+          <p class="panel-title">{{ workout.date|date:"DATETIME_FORMAT" }}</p>
+          </div>
+          <div class="panel-body">
+            {% if workout.mood %}
+            <p>Mood: {{ workout.mood }}</p>
+            {% endif %}
+            <p>Location: {{ workout.location|default:"--" }}</p>
+            <p>Weight: {{ workout.weight|default:"--" }}</p>
+            {% if workout.notes %}
+            <p>Notes:<br>{{ workout.notes }}</p>
+            {% endif %}
+          </div>
+          <div class="panel-footer">
+            <p class="text-center"><a href="{% url 'workout:workout_detail' workout.date|date:'Y' workout.date|date:'m' workout.pk %}" class="btn btn-default">View</a></p>
+          </div>
+        </div>
+      {% endfor %}
+
     </div>
   </div>
 

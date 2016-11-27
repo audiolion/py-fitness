@@ -12,12 +12,27 @@ urlpatterns = [
         name='dashboard'
     ),
     url(
-        regex=r'^workouts/(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/(?P<pk>[0-9]+)/edit$',
+        regex=r'^(?P<year>[0-9]{4})/$',
+        view=views.WorkoutYearListView.as_view(),
+        name='workout_list_year'
+    ),
+    url(
+        regex=r'^(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/$',
+        view=views.WorkoutMonthListView.as_view(),
+        name='workout_list_month'
+    ),
+    url(
+        regex=r'^(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/(?P<pk>[0-9]+)/$',
+        view=views.WorkoutDetailView.as_view(),
+        name='workout_detail'
+    ),
+    url(
+        regex=r'^(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/(?P<pk>[0-9]+)/edit$',
         view=views.WorkoutUpdateView.as_view(),
         name='workout_update'
     ),
     url(
-        regex=r'^workouts/(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/(?P<pk>[0-9]+)/delete$',
+        regex=r'^(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/(?P<pk>[0-9]+)/delete$',
         view=views.WorkoutUpdateView.as_view(),
         name='workout_delete'
     ),
