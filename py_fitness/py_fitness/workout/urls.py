@@ -37,6 +37,21 @@ urlpatterns = [
         name='workout_delete'
     ),
     # url(
+    #     regex=r'^(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/(?P<pk>[0-9]+)/exercise/add$',
+    #     view=views.ExerciseCreateView.as_view(),
+    #     name='exercise_create'
+    # ),
+    url(
+        regex=r'^(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/(?P<pk>[0-9]+)/exercise/(?P<epk>[0-9]+)/edit$',
+        view=views.ExerciseUpdateView.as_view(),
+        name='exercise_update'
+    ),
+    # url(
+    #     regex=r'^(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/(?P<pk>[0-9]+)/exercise/(?P<epk>[0-9]+)/delete$',
+    #     view=views.ExerciseDeleteView.as_view(),
+    #     name='exercise_delete'
+    # ),
+    # url(
     #     regex=r'^workouts/$',
     #     view=views.ApiWorkoutList.as_view(),
     #     name='workout_list'
