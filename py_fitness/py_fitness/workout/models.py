@@ -9,12 +9,14 @@ from py_fitness.core.behaviors import Authorable, Editorable, Publishable, Times
 
 
 class Workout(Authorable, Timestampable, Publishable, models.Model):
+    title = models.CharField(max_length=254, blank=True)
     date = models.DateTimeField()
     weight = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     duration = models.DurationField(null=True, blank=True)
     mood = models.CharField(max_length=254, blank=True)
     location = models.CharField(max_length=254, blank=True)
     notes = models.TextField(blank=True)
+    finished = models.BooleanField(default=False, blank=True)
 
     objects = models.Manager()
 
@@ -25,7 +27,7 @@ class Workout(Authorable, Timestampable, Publishable, models.Model):
         return "{}'s workout on {}".format(self.author.name, self.date.strftime("%m-%d-%Y"))
 
     def get_absolute_url(self):
-        return reverse("api:workout_detail", kwargs={"pk": self.pk,
+        return reverse("workout:workout_detail", kwargs={"pk": self.pk,
                                                      "year": self.date.strftime("%Y"),
                                                      "month": self.date.strftime("%m")})
 
