@@ -45,7 +45,7 @@
           var count = parseInt(document.querySelector('#id_sets-TOTAL_FORMS').value);
           var template = document.querySelector('#form-template').innerHTML;
           var compiledTemplate = template.replace(/__prefix__/g, count);
-          compiledTemplate = compiledTemplate.substring(compiledTemplate.indexOf('card-1')-18, compiledTemplate.lastIndexOf("hidden")+15);
+          compiledTemplate = compiledTemplate.substring(compiledTemplate.indexOf('box')-18, compiledTemplate.lastIndexOf("hidden")+15);
           document.querySelector('div#set-forms-container form div.form-actions').insertAdjacentHTML('beforebegin', compiledTemplate);
           document.querySelector('#id_sets-TOTAL_FORMS').value = (count + 1).toString();
           var el = document.querySelector('#div_id_sets-' + count.toString() + '-number');
