@@ -17,7 +17,8 @@ class WorkoutDashboardView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         workout_form = WorkoutForm()
-        return render(request, "pages/dashboard.html", context={"form": workout_form})
+        workouts = request.user.workout_workout_author.filter(date__month__gte=timezone.now().month-1).order_by('-date')
+        return render(request, "pages/dashboard.html", context={"form": workout_form, "workouts": workouts})
 
     def post(self, request, *args, **kwargs):
         workout_form = WorkoutForm(request.POST)

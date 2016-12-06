@@ -12,21 +12,78 @@
 <div class="container">
   {% load crispy_forms_tags %}
 
-  <div class="row">
-    <div class="col-sm-12">
+  <ul id="workoutTabs" role="tablist" class="nav nav-tabs nav-justified">
+    <li role="presentation"><a id="logs-tab" href="#logs" aria-controls="logs" role="tab" data-toggle="tab">Logs</a></li>
+    <li role="presentation" class="active"><a id="new-tab" href="#new" aria-controls="new" role="tab" data-toggle="tab" aria-expanded="true">New Workout</a></li>
+    <li role="presentation"><a id="graphs-tab" href="#graphs" aria-controls="graphs" role="tab" data-toggle="tab">Graphs</a></li>
+  </ul>
 
-      <h2>{{ request.user.username }}</h2>
-      {% if request.user.name %}
-        <p>{{ request.user.name }}</p>
-      {% endif %}
-    </div>
-  </div>
+  <div id="workoutTabsContent" class="tab-content">
+    <div style="margin-top: 30px"></div>
 
-  <div class="row">
-    <div class="col-md-6 col-md-offset-3">
-      <div class="card">
-        {% crispy form %}
+    <div class="tab-pane fade" role="tabpanel" aria-labelledby="logs-tab" id="logs">
+      <div class="panel-group" role="tablist" id="accordion" aria-multiselectable="true">
+
+        {% for workout in workouts %}
+        <div class="panel panel-default">
+
+          <div class="panel-heading" role="tab" id="heading{{ forloop.counter }}">
+            <a href="#collapse{{ forloop.counter }}" data-toggle="collapse" data-parent="#accordion" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}" class="no-collapse clearfix">
+            <h4 class="panel-title" id="-collapsible-group-item-#{{ forloop.counter }}">
+              <div class="col-xs-8 col-sm-4">
+                <span class="label label-default">{{ workout.date|date:"l, N j, Y" }}</span>
+              </div>
+              <div class="col-sm-4 hidden-xs">{{ workout.title }}</div>
+              <div class="col-xs-4 col-sm-2 col-sm-offset-2">
+                <span class="label label-info">{{ workout.date|date:"h:i A"|lower }}&nbsp;<i class="fa fa-chevron-down"></i></span>
+              </div>
+            </h4>
+            </a>
+          </div>
+
+          <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{ forloop.counter }}" aria-expanded="false">
+            <div class="panel-body">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Location</th>
+                      <th>Weight</th>
+                      <th>Mood</th>
+                      <th>Duration</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th>{{ workout.location|default:"--" }}</th>
+                      <th>{{ workout.weight|default:"--" }}</th>
+                      <th>{{ workout.mood|default:"--" }}</th>
+                      <th>{{ workout.duration|default:"--" }}</th>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p>{{ workout.notes }}</p>
+              <p class="text-center"><a href="{% url 'workout:workout_detail' workout.date|date:'Y' workout.date|date:'m' workout.pk %}" class="btn btn-primary">View</a></p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+
       </div>
+    </div>
+
+    <div class="tab-pane fade active in" role="tabpanel" aria-labelledby="new-tab" id="new">
+      <div class="col-md-6 col-md-offset-3">
+        <h2 class="text-center">New Workout</h2>
+        <div class="box">
+          {% crispy form %}
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" role="tabpanel" aria-labelledby="graphs-tab" id="graphs">
+
     </div>
   </div>
 
