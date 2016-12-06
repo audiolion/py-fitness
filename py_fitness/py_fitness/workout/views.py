@@ -7,6 +7,8 @@ from django.shortcuts import render, render_to_response
 from django.utils import timezone
 from django.views.generic import View, DetailView, UpdateView, DeleteView, CreateView
 
+
+
 from py_fitness.users.models import User
 
 from .forms import WorkoutForm, ExerciseForm, SetFormSet, SetFormSetHelper
@@ -93,9 +95,10 @@ class ExerciseUpdateView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         exercise = Exercise.objects.get(pk=kwargs.get('epk'))
+        exercises = Exercise.objects.filter(name__search=exercise.name)
         formset = SetFormSet(instance=exercise)
         return render(request, "workout/exercise_form.html",
-            context={"formset": formset, "exercise": exercise, "helper": SetFormSetHelper()})
+            context={"formset": formset, "exercise": exercise, "exercises": exercises, "helper": SetFormSetHelper()})
 
     def post(self, request, *args, **kwargs):
         exercise = Exercise.objects.get(pk=kwargs.get('epk'))

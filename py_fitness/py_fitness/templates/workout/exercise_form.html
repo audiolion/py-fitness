@@ -4,20 +4,118 @@
 {% block title %}Add Exercise{% endblock %}
 
 {% block content %}
-<div class="container">
+<h1 class="text-center page-header">{{ exercise }}</h1>
+<ul id="workoutTabs" role="tablist" class="nav nav-tabs nav-justified">
+    <li role="presentation"><a id="logs-tab" href="#logs" aria-controls="logs" role="tab" data-toggle="tab">Logs</a></li>
+    <li role="presentation" class="active"><a id="new-tab" href="#new" aria-controls="new" role="tab" data-toggle="tab" aria-expanded="true">Add Exercise</a></li>
+    <li role="presentation"><a id="graphs-tab" href="#graphs" aria-controls="graphs" role="tab" data-toggle="tab">Graphs</a></li>
+  </ul>
 
-  <div class="row">
-    <div class="col-xs-12">
+  <div id="workoutTabsContent" class="tab-content">
+    <div style="margin-top: 30px"></div>
 
-      <h2 class="text-center page-header">{{ exercise }} <a href="#" class="btn btn-primary add-item pull-right"><i class="fa fa-plus"></i> Add Set</a></h2>
+    <div class="tab-pane fade" role="tabpanel" aria-labelledby="logs-tab" id="logs">
+      <div class="panel-group" role="tablist" id="accordion" aria-multiselectable="true">
+
+        {% for exercise in exercises %}
+        <div class="panel panel-default">
+
+          <div class="panel-heading" role="tab" id="heading{{ forloop.counter }}">
+            <a href="#collapse{{ forloop.counter }}" data-toggle="collapse" data-parent="#accordion" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}" class="no-collapse clearfix">
+            <h4 class="panel-title" id="-collapsible-group-item-#{{ forloop.counter }}">
+              <div class="col-xs-6">
+                <span class="label label-default">{{ exercise.workout.date|date:"SHORT_DATETIME_FORMAT" }}</span>
+              </div>
+              <div class="col-xs-6">
+                {{ exercise }}
+              </div>
+            </h4>
+            </a>
+          </div>
+
+          <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{ forloop.counter }}" aria-expanded="false">
+            <div class="panel-body">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Set #</th>
+                      <th>Weight</th>
+                      <th>Reps</th>
+                      <th>Type</th>
+                      <th>Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for set in exercise.sets.all %}
+                      <tr>
+                        <td>{{ set.number }}</td>
+                        <td>{{ set.weight|floatformat:"-2" }} {{ set.get_weight_measurement_display }}</td>
+                        <td>{{ set.repetitions }}</td>
+                        <td>{{ set.get_set_type_display }}</td>
+                        <td>{{ set.notes }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              <p>{{ exercise.notes }}</p>
+            </div>
+          </div>
+
+        </div>
+        {% endfor %}
+
+      </div>
+    </div>
+
+    <div class="tab-pane fade active in" role="tabpanel" aria-labelledby="new-tab" id="new">
+      <div class="table-responsive box">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Set #</th>
+              <th>Weight</th>
+              <th>Reps</th>
+              <th>Type</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for set in exercise.sets.all %}
+              <tr>
+                <td>{{ set.number }}</td>
+                <td>{{ set.weight|floatformat:"-2" }} {{ set.get_weight_measurement_display }}</td>
+                <td>{{ set.repetitions }}</td>
+                <td>{{ set.get_set_type_display }}</td>
+                <td>{{ set.notes }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td>No results to display. Add a set and save to log results for this exercise.</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <p>{{ exercise.notes }}</p>
       {% load crispy_forms_tags %}
+      <div class="clearfix" style="margin: 30px 0px">
+        <a href="#" class="btn btn-primary add-item pull-right"><i class="fa fa-plus"></i>&nbsp;&nbsp;Add Set</a>
+      </div>
       <div id="set-forms-container">
         {% crispy formset helper %}
       </div>
     </div>
-  </div>
 
-</div>
+    <div class="tab-pane fade" role="tabpanel" aria-labelledby="graphs-tab" id="graphs">
+
+    </div>
+
 {% endblock content %}
 
 {% block footer %}

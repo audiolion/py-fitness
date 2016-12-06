@@ -2,7 +2,7 @@ from django import forms
 from django.forms.models import inlineformset_factory
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import HTML, Div, Layout, MultiField, Fieldset, Submit
+from crispy_forms.layout import HTML, Div, Layout, MultiField, Fieldset, Submit, Button
 
 from .models import Workout, Exercise, Set
 
@@ -68,11 +68,11 @@ class SetFormSetHelper(FormHelper):
                         'notes', css_class='textarea',
                     ),
                 ),
-                css_class='card-1', style="margin-bottom: 1em"
+                css_class='box', style="margin-bottom: 1em"
             ),
         )
         self.render_required_fields = True
-        self.add_input(Submit("submit", "Save", css_class="btn btn-primary btn-block"))
+        self.add_input(Submit("submit", "Save", css_class="btn-lg btn-primary"))
 
 class SetForm(forms.ModelForm):
     weight_measurement = forms.ChoiceField(label="Unit", choices=Set.WEIGHT_MEASUREMENT_CHOICES, initial=Set.POUNDS)
@@ -84,4 +84,4 @@ class SetForm(forms.ModelForm):
         fields = ["number", "weight", "weight_measurement", "repetitions", "set_type", "notes"]
 
 
-SetFormSet = inlineformset_factory(Exercise, Set, form=SetForm, extra=1)
+SetFormSet = inlineformset_factory(Exercise, Set, form=SetForm, extra=0)
