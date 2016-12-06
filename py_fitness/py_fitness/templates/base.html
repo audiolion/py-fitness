@@ -64,10 +64,13 @@
               <ul class="dropdown-menu">
               {% if request.user.is_authenticated %}
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">My Profile</a>
+                  <a href="{% url 'workout:dashboard' %}" class="nav-link"><i class="fa fa-superpowers orange"></i>&nbsp;&nbsp;Dashboard</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'account_logout' %}">Sign Out</a>
+                  <a class="nav-link" href="{% url 'users:detail' request.user.username  %}"><i class="fa fa-user orange"></i>&nbsp;&nbsp;&nbsp;My Profile</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'account_logout' %}"><i class="fa fa-sign-out orange"></i>&nbsp;&nbsp;Sign Out</a>
                 </li>
               {% else %}
                 <li class="nav-item">
