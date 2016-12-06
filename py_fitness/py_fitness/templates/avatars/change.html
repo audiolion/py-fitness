@@ -1,0 +1,34 @@
+{% extends "avatars/base.html" %}
+{% load i18n avatar_tags %}
+
+{% block inner %}
+  <div class="box">
+    <h1>{% trans "Current: " %}</h1>
+    <h2>{{ request.user.get_name }}</h2>
+    {% avatar user %}
+    {% if not avatars %}
+        <p>{% trans "You haven't uploaded an avatar yet. Please upload one now." %}</p>
+    {% else %}
+    <div style="margin-top: 30px"></div>
+    <form method="POST" action="{% url 'avatar_change' %}">
+        <h2>Choices:</h2>
+        <ul class="nav">
+        {% for radio in primary_avatar_form.choice %}
+          <li class="radio">
+            {{ radio }}
+          </li>
+        {% endfor %}
+        </ul>
+        <p>{% csrf_token %}<input class="btn btn-default" type="submit" value="{% trans "Choose new Default" %}" /></p>
+    </form>
+    {% endif %}
+  </div>
+
+  <div class="box">
+    <h2>Add New:</h2>
+    <form enctype="multipart/form-data" method="POST" action="{% url 'avatar_add' %}">
+        {{ upload_avatar_form.as_p }}
+        <p>{% csrf_token %}<input class="btn btn-default" type="submit" value="{% trans "Upload New Image" %}" /></p>
+    </form>
+  </div>
+{% endblock %}

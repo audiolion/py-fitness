@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="col-xs-12 hidden-md hidden-lg box">
+  <ul class="nav nav-pills nav-justified">
+    {% url 'avatar_add' as add %}
+    {% url 'avatar_change' as change %}
+    {% url 'avatar_delete' as delete %}
+    <li {% if request.path == add %}class="active"{% endif %} role="presentation"><a href="{% url 'avatar_add' %}">Add Avatar</a></li>
+    <li {% if request.path == change %}class="active"{% endif %} role="presentation"><a href="{% url 'avatar_change' %}">Change Avatar</a></li>
+    <li {% if request.path == delete %}class="active"{% endif %} role="presentation"><a href="{% url 'avatar_delete' %}">Delete Avatar</a></li>
+  </ul>
+</div>
+<div class="col-md-4 hidden-xs hidden-sm box">
+  <ul class="nav nav-pills nav-stacked">
+    {% url 'avatar_add' as add %}
+    {% url 'avatar_change' as change %}
+    {% url 'avatar_delete' as delete %}
+    <li {% if request.path == add %}class="active"{% endif %} role="presentation"><a href="{% url 'avatar_add' %}">Add Avatar</a></li>
+    <li {% if request.path == change %}class="active"{% endif %} role="presentation"><a href="{% url 'avatar_change' %}">Change Avatar</a></li>
+    <li {% if request.path == delete %}class="active"{% endif %} role="presentation"><a href="{% url 'avatar_delete' %}">Delete Avatar</a></li>
+  </ul>
+</div>
+<div class="col-xs-12 col-md-8">
+{% block inner %}{% endblock %}
+</div>
+{% endblock %}

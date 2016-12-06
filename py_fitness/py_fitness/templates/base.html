@@ -57,21 +57,28 @@
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            {% if request.user.is_authenticated %}
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">My Profile</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'account_logout' %}">Sign Out</a>
-              </li>
-            {% else %}
-              <li class="nav-item">
-                <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">Sign Up</a>
-              </li>
-              <li class="nav-item">
-                <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">Sign In</a>
-              </li>
-            {% endif %}
+            <li class="dropdown">
+            {% load avatar_tags %}
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              {% avatar user 25 %} <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+              {% if request.user.is_authenticated %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">My Profile</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'account_logout' %}">Sign Out</a>
+                </li>
+              {% else %}
+                <li class="nav-item">
+                  <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">Sign Up</a>
+                </li>
+                <li class="nav-item">
+                  <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">Sign In</a>
+                </li>
+              {% endif %}
+              </ul>
+            </li>
           </ul>
         </div>
       </div>

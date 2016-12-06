@@ -44,6 +44,7 @@ THIRD_PARTY_APPS = (
     'hashids',
     'nested_admin',
     'rest_framework',
+    'avatar',
 )
 
 # Apps specific for this project go here.
@@ -286,3 +287,9 @@ REST_FRAMEWORK = {
     # ],
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
+
+AVATAR_ADD_TEMPLATE = "avatars/add.html"
+AVATAR_CHANGE_TEMPLATE = "avatars/change.html"
+AVATAR_DELETE_TEMPLATE = "avatars/confirm_delete.html"
+AVATAR_GRAVATAR_DEFAULT = "mm"
+AVATAR_GRAVATAR_FORCEDEFAULT = True

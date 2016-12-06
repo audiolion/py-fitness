@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^workouts/', include('py_fitness.workout.urls', namespace='workout')),
     url(r'^api/', include('py_fitness.workout.api_urls', namespace='api')),
     url(r'^nested_admin/', include('nested_admin.urls')),
+    url(r'^avatar/', include('avatar.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
