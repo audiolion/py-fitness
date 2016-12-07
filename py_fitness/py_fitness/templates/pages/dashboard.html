@@ -6,6 +6,12 @@
 
 {% block headerjs %}
   <link rel="stylesheet" href="{% static 'css/rome.min.css' %}">
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script type="text/javascript">
+
+    // Load the Visualization API and the corechart package.
+    google.load('visualization', '1', {'packages':['corechart']});
+  </script>
 {% endblock %}
 
 {% block content %}
@@ -83,7 +89,9 @@
     </div>
 
     <div class="tab-pane fade" role="tabpanel" aria-labelledby="graphs-tab" id="graphs">
-
+      <div id="bar_chart" class="well">
+        {{ bar_chart.as_html }}
+      </div>
     </div>
   </div>
 

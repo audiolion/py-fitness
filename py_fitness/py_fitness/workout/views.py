@@ -2,12 +2,13 @@ from datetime import datetime
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.db.models import Count
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, render_to_response
 from django.utils import timezone
 from django.views.generic import View, DetailView, UpdateView, DeleteView, CreateView
 
-
+from bokeh.plotting import figure, output_file, show
 
 from py_fitness.users.models import User
 
@@ -20,7 +21,8 @@ class WorkoutDashboardView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         workout_form = WorkoutForm()
         workouts = request.user.workout_workout_author.filter(date__month__gte=timezone.now().month-1).order_by('-date')
-        return render(request, "pages/dashboard.html", context={"form": workout_form, "workouts": workouts})
+
+        return render(request, "pages/dashboard.html", context={"form": workout_form, "workouts": workouts, "bar_chart": bar_chart})
 
     def post(self, request, *args, **kwargs):
         workout_form = WorkoutForm(request.POST)

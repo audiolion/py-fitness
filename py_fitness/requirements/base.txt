@@ -55,3 +55,4 @@ hashids==1.1.0
 django-nested-admin==3.0.12
 djangorestframework==3.5.1
 django-avatar==3.1.0
+bokeh==0.12.3

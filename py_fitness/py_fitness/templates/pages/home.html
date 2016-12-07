@@ -1,1 +1,65 @@
 {% extends "base.html" %}
+
+{% block jumbotron %}
+
+<div class="jumbotron">
+  <div class="page-header text-center">
+    <h1>Introducing PY Fitness</h1>
+    <h1><small>The Simple and Easy Workout Tracker</small></h1>
+  </div>
+
+  <div class="box clearfix text-center row">
+    <div class="col-xs-12 col-sm-4">
+      <h2><i class="fa fa-lg fa-book orange"></i></h2>
+      <h4>Easily Log Workouts</h4>
+    </div>
+    <div class="col-xs-12 col-sm-4">
+      <h2><i class="fa fa-lg fa-users orange"></i></h2>
+      <h4>Compete With Your Team</h4>
+    </div>
+    <div class="col-xs-12 col-sm-4">
+      <h2><i class="fa fa-lg fa-line-chart orange"></i></h2>
+      <h4>Chart Progress</h4>
+    </div>
+    <div class="col-xs-12" style="margin-top: 30px">
+      <h2>Mission</h2>
+      <p>Tracking your progress is critical to improving. Without data to know where you stand you don't know if you are heading in the right direction.</p>
+
+      <p>Our goal is to provide a simple fitness tracker to replace the notebook logs in the gym</p>
+    </div>
+  </div>
+
+  <div class="text-center row">
+    <h2>How it Works</h2>
+
+    <div class="col-xs-12 col-sm-4">
+      <h2><i class="fa fa-lg fa-user-plus orange"></i></h2>
+      <h4>Signup for Free</h4>
+      <p>Simply sign up to our service, forever free, and start tracking your workouts.</p>
+    </div>
+    <div class="col-xs-12 col-sm-4">
+      <h2><i class="fa fa-lg fa-mobile orange"></i></h2>
+      <h4>Log Workouts</h4>
+      <p>Use your phone and log your workouts. Your data will be easily viewable in logs and charts.</p>
+    </div>
+    <div class="col-xs-12 col-sm-4">
+      <h2><i class="fa fa-lg fa-bullhorn orange"></i></h2>
+      <h4>Link Your Team</h4>
+      <p>Whether it be your buddy or your athletics team you can see each others workouts and motivate and compete!</p>
+    </div>
+  </div>
+
+    <div class="text-center box clearfix row">
+    <h2>Get Started</h2>
+
+    <div class="col-xs-12">
+      <a href="{% url 'account_signup' %}" class="btn btn-primary" style="margin-right: 1em"><i class="fa fa-user-plus"></i>&nbsp;Sign up</a>
+      <a href="{% url 'account_login' %}" class="btn btn-primary"><i class="fa fa-sign-in"></i>&nbsp;Login</a>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% }

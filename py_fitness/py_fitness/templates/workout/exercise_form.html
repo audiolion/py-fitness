@@ -23,10 +23,10 @@
           <div class="panel-heading" role="tab" id="heading{{ forloop.counter }}">
             <a href="#collapse{{ forloop.counter }}" data-toggle="collapse" data-parent="#accordion" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}" class="no-collapse clearfix">
             <h4 class="panel-title" id="-collapsible-group-item-#{{ forloop.counter }}">
-              <div class="col-xs-6">
+              <div class="col-xs-4 text-center">
                 <span class="label label-default">{{ exercise.workout.date|date:"SHORT_DATETIME_FORMAT" }}</span>
               </div>
-              <div class="col-xs-6">
+              <div class="col-xs-4 text-center">
                 {{ exercise }}
               </div>
             </h4>

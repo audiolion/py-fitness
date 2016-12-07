@@ -45,6 +45,7 @@ THIRD_PARTY_APPS = (
     'nested_admin',
     'rest_framework',
     'avatar',
+    'bokeh',
 )
 
 # Apps specific for this project go here.
