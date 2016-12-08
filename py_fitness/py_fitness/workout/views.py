@@ -1,19 +1,174 @@
 from datetime import datetime
+from collections import OrderedDict
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.db.models import Count
+from django.db.models import Count, Avg, Min, Max
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, render_to_response
 from django.utils import timezone
 from django.views.generic import View, DetailView, UpdateView, DeleteView, CreateView
 
-from bokeh.plotting import figure, output_file, show
+from bokeh.plotting import figure
+from bokeh.resources import CDN
+from bokeh.embed import components
+from bokeh.models import FixedTicker
+from bokeh.models.widgets import Dropdown
 
 from py_fitness.users.models import User
+from py_fitness.core.utils import weeks_between
 
-from .forms import WorkoutForm, ExerciseForm, SetFormSet, SetFormSetHelper
+from .forms import WorkoutForm, WorkoutUpdateForm, ExerciseForm, SetFormSet, SetFormSetHelper
 from .models import Workout, Exercise, Set
+
+
+def bokeh_avg_workouts_per_day(user):
+    DAY_OF_WEEK = {
+        0: 0,
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0,
+        6: 0
+    }
+    workout_plot = user.workout_workout_author.extra({'day': 'extract(dow from date)'}).values('day').annotate(count=Count('id')).values('day', 'count')
+
+    workout_range = user.workout_workout_author.aggregate(min=Min('date'), max=Max('date'))
+    weeks = weeks_between(workout_range['min'], workout_range['max'])
+
+    for item in workout_plot:
+        DAY_OF_WEEK[item['day']] += 1
+
+    x_factors = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    plot = figure(title="Average Workouts per Day", height=1000, width=1000, responsive=True, x_range=x_factors)
+    plot.title.align = "center"
+    plot.line(x_factors, [i/weeks for i in DAY_OF_WEEK.values()], line_width=2)
+    plot.xaxis[0].axis_label = "Day of Week"
+    plot.yaxis[0].axis_label = "Number of Workouts"
+
+    script, chart = components(plot, CDN)
+    return (script, chart)
+
+
+def get_one_rep_max(weight, reps):
+    return float(weight) / (1.0278 - (0.0278 * reps))
+
+
+def bokeh_exercise_1rm_weight_over_time(user, exercise):
+    data = Exercise.objects.filter(workout__author=user).filter(name__search=exercise).values('workout__date', 'sets__weight', 'sets__repetitions')
+
+    dates_data = {}
+    for item in data:
+        date = item['workout__date'].date()
+        if date in dates_data:
+            weight = item.get('sets__weight', None)
+            reps = item.get('sets__repetitions', None)
+            if weight is not None and reps is not None:
+                one_rep_max = get_one_rep_max(weight, reps)
+                if dates_data[date] < one_rep_max:
+                    dates_data[date] = one_rep_max
+        else:
+            weight = item.get('sets__weight', None)
+            reps = item.get('sets__repetitions', None)
+            if weight is not None and reps is not None:
+                one_rep_max = get_one_rep_max(weight, reps)
+                dates_data[date] = one_rep_max
+
+    ordered_dates = OrderedDict(sorted(dates_data.items()))
+    dates = list(ordered_dates.keys())
+    weights = list(ordered_dates.values())
+    plot = figure(title="{} 1RM Over Time (Brzycki Method)".format(exercise), height=600, width=600, responsive=True, x_axis_type="datetime")
+    plot.title.align = "center"
+    plot.line(dates, weights, line_width=2)
+    plot.circle(dates, weights, fill_color="white", size=8)
+    plot.xaxis[0].axis_label = "Date"
+    plot.yaxis[0].axis_label = "Weight (lbs/kg)"
+
+    script, chart = components(plot, CDN)
+    return (script, chart)
+
+
+def bokeh_exercise_avg_weight_over_time(user, exercise):
+    data = Exercise.objects.filter(workout__author=user).filter(name__search=exercise).values('workout__date', 'sets__weight')
+
+    dates_data = {}
+    for item in data:
+        date = item['workout__date'].date()
+        if date in dates_data:
+            weight = item.get('sets__weight', None)
+            if weight is not None:
+                dates_data[date].append(weight)
+        else:
+            weight = item.get('sets__weight', None)
+            if weight is not None:
+                dates_data[date] = [weight]
+
+    for key, value in dates_data.items():
+        dates_data[key] = sum(dates_data[key]) / len(dates_data[key])
+
+    ordered_dates = OrderedDict(sorted(dates_data.items()))
+    dates = list(ordered_dates.keys())
+    weights = list(ordered_dates.values())
+    plot = figure(title="Average {} Weight Over Time".format(exercise), height=600, width=600, responsive=True, x_axis_type="datetime")
+    plot.title.align = "center"
+    plot.line(dates, weights, line_width=2)
+    plot.circle(dates, weights, fill_color="white", size=8)
+    plot.xaxis[0].axis_label = "Date"
+    plot.yaxis[0].axis_label = "Weight (lbs/kg)"
+
+    script, chart = components(plot, CDN)
+    return (script, chart)
+
+
+def bokeh_exercise_max_weight_over_time(user, exercise):
+    data = Exercise.objects.filter(workout__author=user).filter(name__search=exercise).values('workout__date', 'sets__weight')
+
+    dates_data = {}
+    for item in data:
+        date = item['workout__date'].date()
+        if date in dates_data:
+            weight = item.get('sets__weight', None)
+            if weight is not None and weight > dates_data[date]:
+                dates_data[date] = weight
+        else:
+            weight = item.get('sets__weight', None)
+            if weight is not None:
+                dates_data[date] = weight
+
+    ordered_dates = OrderedDict(sorted(dates_data.items()))
+    dates = list(ordered_dates.keys())
+    weights = list(ordered_dates.values())
+    plot = figure(title="Highest {} Weight Over Time".format(exercise), height=600, width=600, responsive=True, x_axis_type="datetime")
+    plot.title.align = "center"
+    plot.line(dates, weights, line_width=2)
+    plot.circle(dates, weights, fill_color="white", size=8)
+    plot.xaxis[0].axis_label = "Date"
+    plot.yaxis[0].axis_label = "Weight (lbs/kg)"
+
+    script, chart = components(plot, CDN)
+    return (script, chart)
+
+
+def bokeh_weight_over_time(user):
+    data = user.workout_workout_author.all().values('date', 'weight')
+
+    dates = []
+    weight = []
+    for item in data:
+        dates.append(item['date'])
+        if item.get('weight', None) is not None:
+            weight.append(item['weight'])
+
+    plot = figure(title="Weight Over Time", height=600, width=600, responsive=True, x_axis_type="datetime")
+    plot.title.align = "center"
+    plot.line(dates, weight, line_width=2)
+    plot.circle(dates, weight, fill_color="white", size=8)
+    plot.xaxis[0].axis_label = "Date"
+    plot.yaxis[0].axis_label = "Weight (lbs/kg)"
+
+    script, chart = components(plot, CDN)
+    return (script, chart)
 
 
 class WorkoutDashboardView(LoginRequiredMixin, View):
@@ -22,7 +177,13 @@ class WorkoutDashboardView(LoginRequiredMixin, View):
         workout_form = WorkoutForm()
         workouts = request.user.workout_workout_author.filter(date__month__gte=timezone.now().month-1).order_by('-date')
 
-        return render(request, "pages/dashboard.html", context={"form": workout_form, "workouts": workouts, "bar_chart": bar_chart})
+        avg_workouts_script, avg_workouts_chart = bokeh_avg_workouts_per_day(request.user)
+        weight_change_script, weight_change_chart = bokeh_weight_over_time(request.user)
+
+        return render(request, "pages/dashboard.html", context={"form": workout_form,
+            "workouts": workouts, "avg_workouts_script": avg_workouts_script,
+            "avg_workouts_chart": avg_workouts_chart, "weight_change_script": weight_change_script,
+            "weight_change_chart": weight_change_chart})
 
     def post(self, request, *args, **kwargs):
         workout_form = WorkoutForm(request.POST)
@@ -82,8 +243,8 @@ class WorkoutMonthListView(LoginRequiredMixin, View):
 
 class WorkoutUpdateView(LoginRequiredMixin, UpdateView):
     model = Workout
-    form_class = WorkoutForm
-    template_name = "workout/workout_list.html"
+    form_class = WorkoutUpdateForm
+    template_name = "workout/workout_form.html"
     success_url = reverse_lazy('workout:workout_list')
 
 
@@ -99,8 +260,16 @@ class ExerciseUpdateView(LoginRequiredMixin, View):
         exercise = Exercise.objects.get(pk=kwargs.get('epk'))
         exercises = Exercise.objects.filter(name__search=exercise.name)
         formset = SetFormSet(instance=exercise)
+
+        exercise_avg_script, exercise_avg_chart = bokeh_exercise_avg_weight_over_time(request.user, exercise.name)
+        exercise_max_script, exercise_max_chart = bokeh_exercise_max_weight_over_time(request.user, exercise.name)
+        exercise_1rm_script, exercise_1rm_chart = bokeh_exercise_1rm_weight_over_time(request.user, exercise.name)
+
         return render(request, "workout/exercise_form.html",
-            context={"formset": formset, "exercise": exercise, "exercises": exercises, "helper": SetFormSetHelper()})
+            context={"formset": formset, "exercise": exercise, "exercises": exercises, "helper": SetFormSetHelper(),
+                     "exercise_avg_script": exercise_avg_script, "exercise_avg_chart": exercise_avg_chart,
+                     "exercise_max_script": exercise_max_script, "exercise_max_chart": exercise_max_chart,
+                     "exercise_1rm_script": exercise_1rm_script, "exercise_1rm_chart": exercise_1rm_chart})
 
     def post(self, request, *args, **kwargs):
         exercise = Exercise.objects.get(pk=kwargs.get('epk'))

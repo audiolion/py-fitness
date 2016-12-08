@@ -1,6 +1,13 @@
 from django.http import (Http404, HttpResponseRedirect)
 from django.contrib import messages
 from django.core.urlresolvers import reverse
+from dateutil import rrule
+import datetime
+
+
+def weeks_between(start, end):
+    weeks = rrule.rrule(rrule.WEEKLY, dtstart=start, until=end)
+    return weeks.count()
 
 
 class FormValidMixin(object):

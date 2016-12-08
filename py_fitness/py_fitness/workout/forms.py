@@ -20,6 +20,19 @@ class WorkoutForm(forms.ModelForm):
         fields = ["title", "date", "location", "mood", "weight", "notes"]
 
 
+class WorkoutUpdateForm(forms.ModelForm):
+    notes = forms.CharField(required=False, widget=forms.Textarea())
+    title = forms.CharField(required=False, help_text="ex/ P90x Day 3 - Back & Biceps")
+    def __init__(self, *args, **kwargs):
+        super(WorkoutUpdateForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit('submit', 'Update Workout'))
+
+    class Meta:
+        model = Workout
+        fields = ["title", "date", "duration", "location", "mood", "weight", "notes"]
+
+
 class ExerciseForm(forms.ModelForm):
     notes = forms.CharField(required=False, widget=forms.Textarea())
 
@@ -84,4 +97,4 @@ class SetForm(forms.ModelForm):
         fields = ["number", "weight", "weight_measurement", "repetitions", "set_type", "notes"]
 
 
-SetFormSet = inlineformset_factory(Exercise, Set, form=SetForm, extra=0)
+SetFormSet = inlineformset_factory(Exercise, Set, form=SetForm, extra=1)

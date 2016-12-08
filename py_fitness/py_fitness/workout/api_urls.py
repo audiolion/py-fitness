@@ -7,6 +7,11 @@ from . import api_views as views
 
 urlpatterns = [
     url(
+        regex=r'^chart/workouts/$',
+        view=views.ChartWorkoutList.as_view(),
+        name='chart_workout_list'
+    ),
+    url(
         regex=r'^workouts/$',
         view=views.ApiWorkoutList.as_view(),
         name='workout_list'

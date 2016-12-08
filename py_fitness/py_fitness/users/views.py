@@ -32,7 +32,10 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self):
-        return reverse('workout:dashboard')
+        if self.request.user.is_authenticated:
+            return reverse('workout:dashboard')
+        else:
+            return reverse('home')
 
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):

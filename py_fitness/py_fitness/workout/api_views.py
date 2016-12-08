@@ -1,5 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import Http404
+from django.db.models import Count, Avg, Min, Max
+from django.http import Http404, JsonResponse
+from django.views.generic import View
 
 from rest_framework import status
 from rest_framework.views import APIView
@@ -14,6 +16,18 @@ from .forms import WorkoutForm
 from .models import Workout, Exercise, Set
 from .permissions import WorkoutIsOwnerOrReadOnly, ExerciseIsOwnerOrReadOnly, SetIsOwnerOrReadOnly, UserIsOwnerOrReadOnly
 from .serializers import ExerciseSerializer, SetSerializer, UserSerializer, WorkoutSerializer
+
+from datetime import date, datetime
+
+
+class ChartWorkoutList(View):
+
+    def get(self, request, *args, **kwargs):
+        data = request.user.workout_workout_author.all().values_list('date', flat=True)
+        dates = {}
+        for date in data:
+            dates["{}".format(date.timestamp())] = 1
+        return JsonResponse(dates)
 
 
 class ApiUserList(generics.ListAPIView):

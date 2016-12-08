@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Edit Workout{% endblock %}
+
+{% block headerjs %}
+  <link rel="stylesheet" href="{% static 'css/rome.min.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1 class="text-center page-header">Edit Workout on  {{ workout.date|date:"DATETIME_FORMAT" }}</h1>
+
+<div class="box">
+  {% load crispy_forms_tags %}
+
+  {% crispy form %}
+</div>
+
+{% endblock %}

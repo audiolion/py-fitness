@@ -5,18 +5,35 @@
 
 
 {% block headerjs %}
+  <script type="text/javascript" src="//d3js.org/d3.v3.min.js"></script>
+  <script type="text/javascript" src="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.css" />
   <link rel="stylesheet" href="{% static 'css/rome.min.css' %}">
-  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  <script type="text/javascript">
+  <link
+    href="http://cdn.pydata.org/bokeh/release/bokeh-0.12.3.min.css"
+    rel="stylesheet" type="text/css">
+  <link
+    href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.3.min.css"
+    rel="stylesheet" type="text/css">
 
-    // Load the Visualization API and the corechart package.
-    google.load('visualization', '1', {'packages':['corechart']});
-  </script>
+  <script src="http://cdn.pydata.org/bokeh/release/bokeh-0.12.3.min.js"></script>
+  <script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.3.min.js"></script>
+  {{ avg_workouts_script|safe }}
+  {{ weight_change_script|safe }}
 {% endblock %}
 
 {% block content %}
 <div class="container">
+  <ol class="breadcrumb">
+    <li class="active">Dashboard</li>
+  </ol>
+
   {% load crispy_forms_tags %}
+
+  <div class="box clearfix">
+    <h3 class="text-center">Workout Heatmap</h3>
+    <div id="cal-heatmap"></div>
+  </div>
 
   <ul id="workoutTabs" role="tablist" class="nav nav-tabs nav-justified">
     <li role="presentation"><a id="logs-tab" href="#logs" aria-controls="logs" role="tab" data-toggle="tab">Logs</a></li>
@@ -89,8 +106,21 @@
     </div>
 
     <div class="tab-pane fade" role="tabpanel" aria-labelledby="graphs-tab" id="graphs">
-      <div id="bar_chart" class="well">
-        {{ bar_chart.as_html }}
+      <div class="col-xs-12 text-center">
+        <label for="charts">Chart Type
+        <select name="charts" id="chartOptions" class="form-control">
+          <option value="one">Average Workouts per Day</option>
+          <option value="two">Weight Over Time</option>
+        </select>
+        </label>
+      </div>
+      <div id="chart" class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
+        <div id="avg-workouts">
+        {{ avg_workouts_chart|safe }}
+        </div>
+        <div id="weight-change" style="display: none">
+        {{ weight_change_chart|safe }}
+        </div>
       </div>
     </div>
   </div>
@@ -98,6 +128,132 @@
 </div>
 {% endblock content %}
 
-{% block footer %}
+{% block footerjs %}
   <script src="{% static 'js/project.min.js' %}"></script>
+  <script>
+    var callback = function(e) {
+      var resetBtns = document.getElementsByClassName('bk-tool-icon-reset');
+      for (var i = 0; i < resetBtns.length; i++) {
+        resetBtns[i].click();
+      }
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+      var target = document.getElementById('graphs');
+
+      var observer = new MutationObserver(function(mutations) {
+        callback();
+        this.disconnect();
+      });
+
+      var config = { attributes: true };
+      observer.observe(target, config);
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+      var target = document.getElementById('chartOptions');
+
+      var selectCallback = function(e) {
+        if (target.value == "one") {
+          document.getElementById('weight-change').style.display = "none";
+          document.getElementById('avg-workouts').style.display = "block";
+          callback();
+        } else if (target.value == "two") {
+          document.getElementById('avg-workouts').style.display = "none";
+          document.getElementById('weight-change').style.display = "block";
+          callback();
+        }
+      }
+
+      if (target.addEventListener) {
+        target.addEventListener("change", selectCallback, false);
+      } else if (target.attachEvent) {
+        target.attachEvent("onchange", selectCallback);
+      }
+    });
+
+    var options = {
+      start: null,
+      range: 12,
+      domain: "month",
+      subDomain: "day",
+      data: "{% url 'api:chart_workout_list' %}",
+      dataType: "json",
+      legend: [0, 1, 2, 3],
+      label: {
+        position: "top"
+      },
+      itemName: ["workout","workouts"],
+      onClick: function(date, itemCount) {
+        month = date.getMonth() + 1
+        if (month < 10) {
+          month = "0" + month;
+        }
+        window.location = "/workouts/" + date.getFullYear() + "/" + month + "/";
+      }
+    };
+
+    var threeMonthsAgo = function(){
+        now = new Date();
+        now.setMonth(now.getMonth() - 2);
+        return now;
+    }
+
+    var sixMonthsAgo = function(){
+        now = new Date();
+        now.setMonth(now.getMonth() - 5);
+        return now;
+    }
+
+    var oneYearAgo = function(){
+        now = new Date();
+        now.setYear(now.getFullYear() - 1);
+        now.setMonth(now.getMonth() + 1);
+        return now;
+    }
+
+    var width = function() {
+      var w = window;
+      var d = document;
+      var e = d.documentElement;
+      var g = d.getElementsByTagName('body')[0];
+      var width = w.innerWidth || e.clientWidth || g.clientWidth;
+      return width
+    }
+
+    var responsiveCal = function(options) {
+
+        if (width() < 495) {
+          options.start = threeMonthsAgo();
+          options.range = 3;
+        }
+        else if (width() < 992) {
+            options.start = sixMonthsAgo();
+            options.range = 6;
+        } else {
+            options.start = oneYearAgo();
+            options.range = 12;
+        }
+
+        if (typeof cal === "object") {
+            document.getElementById('cal-heatmap').innerHTML = '';
+        }
+        cal = new CalHeatMap();
+        cal.init( options );
+
+    }
+
+    // run first time, put in load if your scripts are in footer
+    responsiveCal(options);
+
+    window.addEventListener('responsive', function(customEvent) {
+      responsiveCal(cal.options);
+    })
+
+    window.onresize = function () {
+      if (this.resizeTO) clearTimeout(this.resizeTO);
+      this.resizeTO = setTimeout(function () {
+        window.dispatchEvent(new CustomEvent('responsive', {}));
+      }, 500);
+    };
+  </script>
 {% endblock %}
