@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{ request.user }}'s Dashboard{% endblock %}
+{% block title %}{{ request.user.get_name }}'s Dashboard{% endblock %}
 
 
 {% block headerjs %}
@@ -9,15 +9,7 @@
   <script type="text/javascript" src="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.min.js"></script>
   <link rel="stylesheet" href="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.css" />
   <link rel="stylesheet" href="{% static 'css/rome.min.css' %}">
-  <link
-    href="http://cdn.pydata.org/bokeh/release/bokeh-0.12.3.min.css"
-    rel="stylesheet" type="text/css">
-  <link
-    href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.3.min.css"
-    rel="stylesheet" type="text/css">
-
-  <script src="http://cdn.pydata.org/bokeh/release/bokeh-0.12.3.min.js"></script>
-  <script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.3.min.js"></script>
+  {% include 'common/bokeh.html' %}
   {{ avg_workouts_script|safe }}
   {{ weight_change_script|safe }}
 {% endblock %}

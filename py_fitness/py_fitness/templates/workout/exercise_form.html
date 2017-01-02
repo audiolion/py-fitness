@@ -4,15 +4,7 @@
 {% block title %}Add Exercise{% endblock %}
 
 {% block headerjs %}
-  <link
-    href="http://cdn.pydata.org/bokeh/release/bokeh-0.12.3.min.css"
-    rel="stylesheet" type="text/css">
-  <link
-    href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.3.min.css"
-    rel="stylesheet" type="text/css">
-
-  <script src="http://cdn.pydata.org/bokeh/release/bokeh-0.12.3.min.js"></script>
-  <script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.3.min.js"></script>
+  {% include 'common/bokeh.html' %}
   {{ exercise_avg_script|safe }}
   {{ exercise_max_script|safe }}
   {{ exercise_1rm_script|safe }}
@@ -20,6 +12,12 @@
 {% endblock %}
 
 {% block content %}
+  <ol class="breadcrumb">
+    <li><a href="{% url 'workout:dashboard' %}">Dashboard</a></li>
+    <li><a href="{% url 'workout:workout_detail' exercise.workout.date|date:'Y' exercise.workout.date|date:'m' exercise.workout.pk %}">Workout Detail</a></li>
+    <li class="active">Exercise Record</li>
+  </ol>
+
   <h1 class="text-center page-header">{{ exercise }}</h1>
   <ul id="workoutTabs" role="tablist" class="nav nav-tabs nav-justified">
     <li role="presentation"><a id="logs-tab" href="#logs" aria-controls="logs" role="tab" data-toggle="tab">Logs</a></li>

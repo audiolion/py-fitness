@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{ request.user }}'s Dashboard{% endblock %}
+{% block title %}{{ request.user.get_name }}'s Dashboard{% endblock %}
 
 
 {% block headerjs %}

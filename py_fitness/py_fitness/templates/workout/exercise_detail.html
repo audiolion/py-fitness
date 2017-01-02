@@ -1,18 +1,200 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %} {{ object }} {% endblock %}
+{% block title %}Add Exercise{% endblock %}
+
+{% block headerjs %}
+  {% include 'common/bokeh.html' %}
+  {{ exercise_avg_script|safe }}
+  {{ exercise_max_script|safe }}
+  {{ exercise_1rm_script|safe }}
+
+{% endblock %}
 
 {% block content %}
-<div class="container">
+  <ol class="breadcrumb">
+    <li><a href="{% url 'workout:dashboard' %}">Dashboard</a></li>
+    <li><a href="{% url 'workout:workout_detail' exercise.workout.date|date:'Y' workout.date|date:'m' workout.pk %}">Workout Detail</a></li>
+    <li class="active">Exercise Detail</li>
+  </ol>
+  <h1 class="text-center page-header">{{ exercise }}</h1>
+  <ul id="workoutTabs" role="tablist" class="nav nav-tabs nav-justified">
+    <li role="presentation"><a id="logs-tab" href="#logs" aria-controls="logs" role="tab" data-toggle="tab">Logs</a></li>
+    <li role="presentation" class="active"><a id="new-tab" href="#new" aria-controls="new" role="tab" data-toggle="tab" aria-expanded="true">Add Exercise</a></li>
+    <li role="presentation"><a id="graphs-tab" href="#graphs" aria-controls="graphs" role="tab" data-toggle="tab">Graphs</a></li>
+  </ul>
 
-  <div class="row">
-    <div class="col-sm-12">
+  <div id="workoutTabsContent" class="tab-content">
+    <div style="margin-top: 30px"></div>
 
-      <h2>{{ object}}</h2>
+    <div class="tab-pane fade" role="tabpanel" aria-labelledby="logs-tab" id="logs">
+      <div class="panel-group" role="tablist" id="accordion" aria-multiselectable="true">
 
+        {% for exercise in exercises %}
+        <div class="panel panel-default">
+
+          <div class="panel-heading" role="tab" id="heading{{ forloop.counter }}">
+            <a href="#collapse{{ forloop.counter }}" data-toggle="collapse" data-parent="#accordion" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}" class="no-collapse clearfix">
+            <h4 class="panel-title" id="-collapsible-group-item-#{{ forloop.counter }}">
+              <div class="col-xs-4 text-center">
+                <span class="label label-default">{{ exercise.workout.date|date:"SHORT_DATETIME_FORMAT" }}</span>
+              </div>
+              <div class="col-xs-4 text-center">
+                {{ exercise }}
+              </div>
+            </h4>
+            </a>
+          </div>
+
+          <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{ forloop.counter }}" aria-expanded="false">
+            <div class="panel-body">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Set #</th>
+                      <th>Weight</th>
+                      <th>Reps</th>
+                      <th>Type</th>
+                      <th>Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for set in exercise.sets.all %}
+                      <tr>
+                        <td>{{ set.number }}</td>
+                        <td>{{ set.weight|floatformat:"-2" }} {{ set.get_weight_measurement_display }}</td>
+                        <td>{{ set.repetitions }}</td>
+                        <td>{{ set.get_set_type_display }}</td>
+                        <td>{{ set.notes }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              <p>{{ exercise.notes }}</p>
+            </div>
+          </div>
+
+        </div>
+        {% endfor %}
+
+      </div>
+    </div>
+
+    <div class="tab-pane fade active in" role="tabpanel" aria-labelledby="new-tab" id="new">
+      <div class="table-responsive box">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Set #</th>
+              <th>Weight</th>
+              <th>Reps</th>
+              <th>Type</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for set in exercise.sets.all %}
+              <tr>
+                <td>{{ set.number }}</td>
+                <td>{{ set.weight|floatformat:"-2" }} {{ set.get_weight_measurement_display }}</td>
+                <td>{{ set.repetitions }}</td>
+                <td>{{ set.get_set_type_display }}</td>
+                <td>{{ set.notes }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td>No results to display. Add a set and save to log results for this exercise.</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <p>{{ exercise.notes }}</p>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" role="tabpanel" aria-labelledby="graphs-tab" id="graphs">
+      <div class="col-xs-12 text-center">
+        <label for="charts">Chart Type
+        <select name="charts" id="chartOptions" class="form-control">
+          <option value="one">Average Lifted Weight Over Time</option>
+          <option value="two">Highest Lifted Weight Over Time</option>
+          <option value="three">1RM Over Time</option>
+        </select>
+        </label>
+      </div>
+      <div id="chart" class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
+        <div id="avg-exercise">
+          {{ exercise_avg_chart|safe }}
+        </div>
+        <div id="max-exercise" style="display: none">
+          {{ exercise_max_chart|safe }}
+        </div>
+        <div id="1rm-exercise" style="display: none">
+          {{ exercise_1rm_chart|safe }}
+        </div>
+      </div>
     </div>
   </div>
 
-</div>
 {% endblock content %}
+
+{% block footerjs %}
+  <script type="text/html" id="form-template">
+    {% crispy formset.empty_form helper %}
+  </script>
+
+  <script>
+    var resetCallback = function(e) {
+      var resetBtns = document.getElementsByClassName('bk-tool-icon-reset');
+      for (var i = 0; i < resetBtns.length; i++) {
+        resetBtns[i].click();
+      }
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+      var target = document.getElementById('graphs');
+
+      var observer = new MutationObserver(function(mutations) {
+        resetCallback();
+        this.disconnect();
+      });
+
+      var config = { attributes: true };
+      observer.observe(target, config);
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+      var target = document.getElementById('chartOptions');
+
+      var selectCallback = function(e) {
+        if (target.value == "one") {
+          document.getElementById('max-exercise').style.display = "none";
+          document.getElementById('1rm-exercise').style.display = "none";
+          document.getElementById('avg-exercise').style.display = "block";
+          resetCallback();
+        } else if (target.value == "two") {
+          document.getElementById('avg-exercise').style.display = "none";
+          document.getElementById('1rm-exercise').style.display = "none";
+          document.getElementById('max-exercise').style.display = "block";
+          resetCallback();
+        } else if (target.value == "three") {
+          document.getElementById('avg-exercise').style.display = "none";
+          document.getElementById('max-exercise').style.display = "none";
+          document.getElementById('1rm-exercise').style.display = "block";
+          resetCallback();
+        }
+      }
+
+      if (target.addEventListener) {
+        target.addEventListener("change", selectCallback, false);
+      } else if (target.attachEvent) {
+        target.attachEvent("onchange", selectCallback);
+      }
+    });
+  </script>
+{% endblock %}
