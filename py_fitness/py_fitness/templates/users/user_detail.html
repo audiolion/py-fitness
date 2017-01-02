@@ -10,33 +10,26 @@
 
 {% block content %}
 <div class="container">
-  {% load crispy_forms_tags %}
 
-  <div class="row">
+  <div class="row box">
     <div class="col-sm-12">
 
       <h2>{{ object.username }}</h2>
       {% if object.name %}
         <p>{{ object.name }}</p>
       {% endif %}
+      {% load avatar_tags %}
+      {% avatar user 100 %}
     </div>
+
+    {% if object == request.user %}
+      <div class="col-xs-12" style="margin-top: 30px">
+        <a class="btn btn-primary" href="{% url 'users:update' %}" role="button">My Info</a>
+        <a class="btn btn-primary" href="{% url 'account_email' %}" role="button">E-Mail</a>
+        <a class="btn btn-primary" href="{% url 'avatar_change' %}">Change your avatar</a>
+      </div>
+    {% endif %}
   </div>
-
-{% if object == request.user %}
-<!-- Action buttons -->
-<div class="row">
-
-  <div class="col-sm-12">
-    <a class="btn btn-primary" href="{% url 'users:update' %}" role="button">My Info</a>
-    <a class="btn btn-primary" href="{% url 'account_email' %}" role="button">E-Mail</a>
-    <a class="btn btn-primary" href="{% url 'avatar_change' %}">Change your avatar</a>
-    <!-- Your Stuff: Custom user template urls -->
-  </div>
-
-</div>
-<!-- End Action buttons -->
-{% endif %}
-
 
 </div>
 {% endblock content %}
