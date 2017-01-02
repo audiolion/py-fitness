@@ -39,7 +39,7 @@ class WorkoutSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Workout
-        fields = ('author','date','weight','duration','location','mood','notes','publish_date')
+        fields = ('author','date','weight','duration','location','mood','notes','publish_date','finished')
 
 
 class UserSerializer(serializers.ModelSerializer):
