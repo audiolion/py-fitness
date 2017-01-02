@@ -5,11 +5,34 @@
 
 {% block content %}
 <div class="container">
+  <ol class="breadcrumb">
+    <li><a href="{% url 'workout:dashboard' %}">Dashboard</a></li>
+    <li><a href="{% url 'workout:workout_detail' workout.date|date:'Y' workout.date|date:'m' workout.pk %}">Workout Detail</a></li>
+    <li class="active">Workout Delete</li>
+  </ol>
 
   <div class="row">
-    <div class="col-sm-12">
+    <div class="col-xs-12">
 
-      <h2>{{ object}}</h2>
+      <h1 class="page-header">Delete Workout</h1>
+
+      <div class="box">
+        <form action="{% url 'workout:workout_delete' object.date|date:'Y' object.date|date:'m' object.pk %}" class="form-horizontal" method="post">
+          {% csrf_token %}
+          <p class="alert alert-danger">
+            <i class="fa fa-exclamation-triangle"></i>
+            &nbsp;
+            Are you sure you want to delete <strong>{{ object }}</strong>?
+          </p>
+
+          <button class="btn btn-danger" type="submit">
+            <i class="fa fa-trash"></i>
+            &nbsp;&nbsp;Delete This Workout
+          </button>
+          &nbsp;
+          <a href="{% url 'workout:workout_detail' object.date|date:'Y' object.date|date:'m' object.pk %}" class="btn btn-default"><i class="fa fa-ban"></i>&nbsp;&nbsp;Cancel</a>
+        </form>
+      </div>
 
     </div>
   </div>

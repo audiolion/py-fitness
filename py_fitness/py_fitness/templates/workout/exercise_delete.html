@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Delete {{ object }} {% endblock %}
+
+{% block content %}
+<div class="container">
+  <ol class="breadcrumb">
+    <li><a href="{% url 'workout:dashboard' %}">Dashboard</a></li>
+    <li><a href="{% url 'workout:workout_detail' exercise.workout.date|date:'Y' exercise.workout.date|date:'m' exercise.workout.pk %}">Workout Detail</a></li>
+    <li><a href="{% url 'workout:exercise_update' object.workout.date|date:'Y' object.workout.date|date:'m' object.workout.pk object.pk' %}"></a>Exercise Record</li>
+  </ol>
+
+  <div class="row">
+    <div class="col-xs-12">
+
+      <h1 class="page-header">Delete Exercise</h1>
+
+      <div class="box">
+        <form action="{% url 'workout:exercise_delete' object.workout.date|date:'Y' object.workout.date|date:'m' object.workout.pk object.pk %}" class="form-horizontal" method="post">
+          {% csrf_token %}
+          <p class="alert alert-danger">
+            <i class="fa fa-exclamation-triangle"></i>
+            &nbsp;
+            Are you sure you want to delete <strong>{{ object }}</strong>?
+          </p>
+
+          <button class="btn btn-danger" type="submit">
+            <i class="fa fa-trash"></i>
+            &nbsp;&nbsp;Delete This Exercise
+          </button>
+          &nbsp;
+          <a href="{% url 'workout:exercise_update' object.workout.date|date:'Y' object.workout.date|date:'m' object.workout.pk object.pk %}" class="btn btn-default"><i class="fa fa-ban"></i>&nbsp;&nbsp;Cancel</a>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+{% endblock content %}
